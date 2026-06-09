@@ -1,6 +1,7 @@
 package com.shopflow.order.domain.models;
 
 import com.shopflow.shared.domain.BaseEntity;
+import com.shopflow.shared.domain.Money;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,10 +29,10 @@ enum PaymentType {
 
 public class Order extends BaseEntity {
 
-    private String customerId;
+    private UUID customerId;
     private OrderStatus orderStatus;
 
-    private final List<OrderItem> orderItem;
+    private final List<OrderItem> orderItems;
     private String shippingAddress;
     private PaymentType paymentType;
     private PaymentStatus paymentStatus;
@@ -39,7 +40,7 @@ public class Order extends BaseEntity {
     //must use Value Object Money
 
     //Invariants Constructor
-    public Order(UUID orderId, String customerId, String shippingAddress) {
+    public Order(UUID orderId, UUID customerId, String shippingAddress) {
         super(orderId);
         if (this.getId() == null || customerId == null) {
             throw new IllegalArgumentException("OrderId and CustomerId cannot be null");
@@ -48,25 +49,51 @@ public class Order extends BaseEntity {
         this.shippingAddress = shippingAddress;
 
         this.orderStatus = OrderStatus.PENDING;
-        this.orderItem = new ArrayList<>();
+        this.paymentStatus = PaymentStatus.PENDING;
+        this.orderItems = new ArrayList<>();
     }
 
     public List<OrderItem> getOrderItem() {
-        return Collections.unmodifiableList(orderItem);
+        return Collections.unmodifiableList(orderItems);
     }
 
-    public void addItem(OrderItem item) {
-        if (item == null) {
+    public void addItem(OrderItem newItem) {
+        if (newItem == null) {
             throw new IllegalArgumentException("Item cannot be null");
         }
         if (this.orderStatus != OrderStatus.PENDING) {
             throw new IllegalArgumentException("Cannot add an item to this order. Order status is " + this.orderStatus);
         }
-        if (this.getOrderItem().contains(item)) {
-            item.updateQuantity(item.getQuantity() + 1);
-            return;
+        for (OrderItem existingItem : this.orderItems) {
+            if (existingItem.getProductId().equals(newItem.getProductId())) {
+                existingItem.updateQuantity(existingItem.getQuantity() + newItem.getQuantity());
+                super.maskAsUpdated();
+                return;
+            }
         }
-        this.orderItem.add(item);
+        this.orderItems.add(newItem);
+        super.maskAsUpdated();
+    }
+
+    public void markAsPaid(PaymentType type) {
+        if (this.orderStatus == OrderStatus.CANCELED) {
+            throw new IllegalStateException("Cannot checkout for canceled order!");
+        }
+        if (this.paymentStatus == PaymentStatus.SUCCESS) {
+            throw new IllegalStateException("This order has already been paid.");
+        }
+        this.paymentType = type;
+        this.paymentStatus = PaymentStatus.SUCCESS;
+        this.orderStatus = OrderStatus.PENDING_PAYMENT;
+        super.maskAsUpdated();
+    }
+
+    public Money getTotalAmount() {
+        Money total = Money.zero();
+        for (OrderItem orderItem : this.orderItems) {
+            total = total.add(orderItem.getSubTotal());
+        }
+        return total;
     }
 
 }
