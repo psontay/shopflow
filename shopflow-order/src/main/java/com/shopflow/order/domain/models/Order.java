@@ -8,25 +8,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-enum OrderStatus {
-    PENDING,
-    PENDING_PAYMENT,
-    SHIPPED,
-    CANCELED,
-    SUCCESS,
-}
-
-enum PaymentStatus {
-    PENDING,
-    SUCCESS,
-}
-
-enum PaymentType {
-    CREDIT_CARD,
-    PAYPAL,
-    CASH,
-}
-
 public class Order extends BaseEntity {
 
     private UUID customerId;
@@ -85,6 +66,15 @@ public class Order extends BaseEntity {
         this.paymentType = type;
         this.paymentStatus = PaymentStatus.SUCCESS;
         this.orderStatus = OrderStatus.PENDING_PAYMENT;
+        super.maskAsUpdated();
+    }
+
+    public void cancel() {
+        boolean canNotCancel = (this.orderStatus == OrderStatus.CANCELED || this.orderStatus == OrderStatus.SHIPPED || this.orderStatus == OrderStatus.SUCCESS);
+        if (canNotCancel) {
+            throw new IllegalStateException("Cannot cancel the order in this status" + this.orderStatus);
+        }
+        this.orderStatus = OrderStatus.CANCELED;
         super.maskAsUpdated();
     }
 
