@@ -17,14 +17,13 @@ public class Order extends BaseEntity {
     private String shippingAddress;
     private PaymentType paymentType;
     private PaymentStatus paymentStatus;
-
-    //must use Value Object Money
+    private double discountMultiplier = 1.0;
 
     //Invariants Constructor
     public Order(UUID orderId, UUID customerId, String shippingAddress) {
         super(orderId);
         if (this.getId() == null || customerId == null) {
-            throw new IllegalArgumentException("OrderId and CustomerId cannot be null");
+            throw new IllegalArgumentException("OrderId and CustomerId cannot be null.");
         }
         this.customerId = customerId;
         this.shippingAddress = shippingAddress;
@@ -45,6 +44,9 @@ public class Order extends BaseEntity {
         if (this.orderStatus != OrderStatus.PENDING) {
             throw new IllegalArgumentException("Cannot add an item to this order. Order status is " + this.orderStatus);
         }
+        if (newItem.getQuantity() > 99) {
+            throw new IllegalArgumentException("Maximum of 99 items per product type allowed.");
+        }
         for (OrderItem existingItem : this.orderItems) {
             if (existingItem.getProductId().equals(newItem.getProductId())) {
                 existingItem.updateQuantity(existingItem.getQuantity() + newItem.getQuantity());
@@ -52,8 +54,38 @@ public class Order extends BaseEntity {
                 return;
             }
         }
+        if (this.orderItems.size() >= 50) {
+            throw new IllegalStateException("Oversize of order items.");
+        }
         this.orderItems.add(newItem);
         super.maskAsUpdated();
+    }
+
+    public void changeItemQuantity(UUID productId, int newQuantity) {
+        if (this.orderStatus != OrderStatus.PENDING) {
+            throw new IllegalStateException("Cannot update order item quantity when order status is processing.");
+        }
+        if (newQuantity <= 0) {
+            throw new IllegalArgumentException("new quantity cannot be negative.");
+        }
+        for (OrderItem existingItem : this.orderItems) {
+            if (existingItem.getProductId().equals(productId)) {
+                existingItem.updateQuantity(existingItem.getQuantity() + newQuantity);
+                super.maskAsUpdated();
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Cannot find product in order");
+    }
+
+    public void removeItem(UUID productId) {
+        if (this.orderStatus != OrderStatus.PENDING) {
+            throw new IllegalStateException("Cart can only be modified when the order is pending.");
+        }
+        boolean removed = this.orderItems.removeIf(item -> item.getProductId().equals(productId));
+        if (removed) {
+            super.maskAsUpdated();
+        }
     }
 
     public void markAsPaid(PaymentType type) {
@@ -79,11 +111,19 @@ public class Order extends BaseEntity {
     }
 
     public Money getTotalAmount() {
-        Money total = Money.zero();
-        for (OrderItem orderItem : this.orderItems) {
-            total = total.add(orderItem.getSubTotal());
+        return this.orderItems.stream().map(OrderItem :: getSubTotal).reduce(Money.zero(), Money :: add).multiply(this.discountMultiplier);
+    }
+
+    public void applyDiscount(double multiplier) {
+        if (multiplier <= 0 || multiplier > 1) {
+            throw new IllegalArgumentException("Invalid multiplier discount");
         }
-        return total;
+        this.discountMultiplier = multiplier;
+        super.maskAsUpdated();
+    }
+
+    public long countWholesaleItems() {
+        return this.orderItems.stream().filter(item -> item.getQuantity() >= 3).count();
     }
 
 }

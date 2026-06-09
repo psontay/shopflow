@@ -46,4 +46,20 @@ public record Money(BigDecimal amount, Currency currency) {
         }
     }
 
+    public Money multiply(double multiplier) {
+        BigDecimal factor = BigDecimal.valueOf(multiplier);
+        BigDecimal newAmount = this.amount.multiply(factor);
+        return new Money(newAmount, this.currency);
+    }
+
+    public Money divide(double divisor) {
+        if (divisor == 0) {
+            throw new IllegalArgumentException("Cannot divide 0.");
+        }
+        BigDecimal divisorBD = BigDecimal.valueOf(divisor);
+        int scale = this.currency.getDefaultFractionDigits();
+        BigDecimal newAmount = this.amount.divide(divisorBD, scale, RoundingMode.HALF_EVEN);
+        return new Money(newAmount, this.currency);
+    }
+
 }

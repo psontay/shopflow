@@ -13,7 +13,7 @@ public class CreateOrderCommandHandler {
                 newOrderId, command.customerId(), command.shippingAddress()
         );
         for (CreateOrderCommand.OrderItemCommand itemCmd : command.items()) {
-            OrderItem orderItem = new OrderItem(UUID.randomUUID(), itemCmd.productId(), itemCmd.productName(), itemCmd.quantity(), itemCmd.unitPrice());
+            OrderItem orderItem = new OrderItem(UUID.randomUUID(), itemCmd.productId(), itemCmd.quantity(), itemCmd.unitPrice());
             newOrder.addItem(orderItem);
         }
         return newOrder.getId();

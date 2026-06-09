@@ -12,7 +12,7 @@ public record CreateOrderCommand(
 ) {
 
     public record OrderItemCommand(
-            String productId,
+            UUID productId,
             String productName,
             int quantity,
             Money unitPrice

@@ -7,14 +7,13 @@ import java.util.UUID;
 
 public class OrderItem extends BaseEntity {
 
-    private final String productId;
-    private final String productName;
+    private final UUID productId;
     private int quantity;
     private final Money unitPrice;
 
-    public OrderItem(UUID id, String productId, String productName, int quantity, Money unitPrice) {
+    public OrderItem(UUID id, UUID productId, int quantity, Money unitPrice) {
         super(id);
-        if (productId == null || productId.isBlank()) {
+        if (productId == null) {
             throw new IllegalArgumentException("ProductId cannot be null or blank");
         }
         if (quantity <= 0) {
@@ -24,16 +23,15 @@ public class OrderItem extends BaseEntity {
             throw new IllegalArgumentException("UnitPrice cannot be null");
         }
         this.productId = productId;
-        this.productName = productName;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
     }
 
     public Money getSubTotal() {
-        return null;
+        return Money.of(this.unitPrice.amount().multiply(java.math.BigDecimal.valueOf(quantity)));
     }
 
-    public void updateQuantity(int newQuantity) {
+    void updateQuantity(int newQuantity) {
         if (newQuantity <= 0) {
             throw new IllegalArgumentException("Quantity cannot be negative");
         }
@@ -41,12 +39,8 @@ public class OrderItem extends BaseEntity {
         this.maskAsUpdated();
     }
 
-    public String getProductId() {
+    public UUID getProductId() {
         return productId;
-    }
-
-    public String getProductName() {
-        return productName;
     }
 
     public int getQuantity() {
