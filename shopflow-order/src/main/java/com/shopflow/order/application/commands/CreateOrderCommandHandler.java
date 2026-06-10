@@ -1,5 +1,6 @@
 package com.shopflow.order.application.commands;
 
+import com.shopflow.order.application.outbox.OutboxService;
 import com.shopflow.order.domain.models.Order;
 import com.shopflow.order.domain.models.OrderItem;
 import com.shopflow.order.domain.repositories.OrderRepository;
@@ -12,9 +13,11 @@ import java.util.UUID;
 public class CreateOrderCommandHandler {
 
     private final OrderRepository orderRepository;
+    private final OutboxService outboxService;
 
-    public CreateOrderCommandHandler(OrderRepository orderRepository) {
+    public CreateOrderCommandHandler(OrderRepository orderRepository, OutboxService outboxService) {
         this.orderRepository = orderRepository;
+        this.outboxService = outboxService;
     }
 
     @Transactional
@@ -28,6 +31,7 @@ public class CreateOrderCommandHandler {
             newOrder.addItem(orderItem);
         }
         orderRepository.save(newOrder);
+        outboxService.saveEvents(newOrder.getDomainEvents());
         return newOrder.getId();
     }
 

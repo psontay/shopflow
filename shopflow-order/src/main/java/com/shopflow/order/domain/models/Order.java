@@ -1,5 +1,8 @@
 package com.shopflow.order.domain.models;
 
+import com.shopflow.order.domain.events.OrderCreatedEvent;
+import com.shopflow.order.domain.exceptions.OrderDomainException;
+import com.shopflow.order.domain.exceptions.OrderErrorCode;
 import com.shopflow.shared.domain.BaseEntity;
 import com.shopflow.shared.domain.Money;
 
@@ -30,6 +33,7 @@ public class Order extends BaseEntity {
 
         this.orderStatus = OrderStatus.PENDING;
         this.paymentStatus = PaymentStatus.PENDING;
+        this.registerEvent(new OrderCreatedEvent(orderId));
         this.orderItems = new ArrayList<>();
     }
 
@@ -39,13 +43,13 @@ public class Order extends BaseEntity {
 
     public void addItem(OrderItem newItem) {
         if (newItem == null) {
-            throw new IllegalArgumentException("Item cannot be null");
+            throw new OrderDomainException(OrderErrorCode.INSUFFICIENT_STOCK);
         }
         if (this.orderStatus != OrderStatus.PENDING) {
-            throw new IllegalArgumentException("Cannot add an item to this order. Order status is " + this.orderStatus);
+            throw new OrderDomainException(OrderErrorCode.INVALID_ORDER_STATE);
         }
         if (newItem.getQuantity() > 99) {
-            throw new IllegalArgumentException("Maximum of 99 items per product type allowed.");
+            throw new OrderDomainException(OrderErrorCode.INSUFFICIENT_STOCK);
         }
         for (OrderItem existingItem : this.orderItems) {
             if (existingItem.getProductId().equals(newItem.getProductId())) {
@@ -55,7 +59,7 @@ public class Order extends BaseEntity {
             }
         }
         if (this.orderItems.size() >= 50) {
-            throw new IllegalStateException("Oversize of order items.");
+            throw new OrderDomainException(OrderErrorCode.INSUFFICIENT_STOCK);
         }
         this.orderItems.add(newItem);
         super.maskAsUpdated();
@@ -63,7 +67,7 @@ public class Order extends BaseEntity {
 
     public void changeItemQuantity(UUID productId, int newQuantity) {
         if (this.orderStatus != OrderStatus.PENDING) {
-            throw new IllegalStateException("Cannot update order item quantity when order status is processing.");
+            throw new OrderDomainException(OrderErrorCode.INVALID_ORDER_STATE);
         }
         if (newQuantity <= 0) {
             throw new IllegalArgumentException("new quantity cannot be negative.");
@@ -80,7 +84,7 @@ public class Order extends BaseEntity {
 
     public void removeItem(UUID productId) {
         if (this.orderStatus != OrderStatus.PENDING) {
-            throw new IllegalStateException("Cart can only be modified when the order is pending.");
+            throw new OrderDomainException(OrderErrorCode.INVALID_ORDER_STATE);
         }
         boolean removed = this.orderItems.removeIf(item -> item.getProductId().equals(productId));
         if (removed) {
@@ -90,10 +94,10 @@ public class Order extends BaseEntity {
 
     public void markAsPaid(PaymentType type) {
         if (this.orderStatus == OrderStatus.CANCELED) {
-            throw new IllegalStateException("Cannot checkout for canceled order!");
+            throw new OrderDomainException(OrderErrorCode.INVALID_ORDER_STATE);
         }
         if (this.paymentStatus == PaymentStatus.SUCCESS) {
-            throw new IllegalStateException("This order has already been paid.");
+            throw new OrderDomainException(OrderErrorCode.INVALID_ORDER_STATE);
         }
         this.paymentType = type;
         this.paymentStatus = PaymentStatus.SUCCESS;
@@ -104,7 +108,7 @@ public class Order extends BaseEntity {
     public void cancel() {
         boolean canNotCancel = (this.orderStatus == OrderStatus.CANCELED || this.orderStatus == OrderStatus.SHIPPED || this.orderStatus == OrderStatus.SUCCESS);
         if (canNotCancel) {
-            throw new IllegalStateException("Cannot cancel the order in this status" + this.orderStatus);
+            throw new OrderDomainException(OrderErrorCode.INVALID_ORDER_STATE);
         }
         this.orderStatus = OrderStatus.CANCELED;
         super.maskAsUpdated();

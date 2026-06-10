@@ -1,6 +1,9 @@
 package com.shopflow.shared.domain;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -9,6 +12,7 @@ public class BaseEntity {
     private final UUID id;
     private final Instant createdAt;
     private Instant updatedAt;
+    private transient final List<DomainEvent> domainEvents = new ArrayList<>();
 
     protected BaseEntity(UUID id) {
         if (id == null) {
@@ -17,6 +21,20 @@ public class BaseEntity {
         this.id = id;
         this.createdAt = Instant.now();
         this.updatedAt = this.createdAt;
+    }
+
+    protected void registerEvent(DomainEvent event) {
+        if (event != null) {
+            this.domainEvents.add(event);
+        }
+    }
+
+    public List<DomainEvent> getDomainEvents() {
+        return Collections.unmodifiableList(domainEvents);
+    }
+
+    public void clearDomainEvents() {
+        this.domainEvents.clear();
     }
 
     public UUID getId() {
