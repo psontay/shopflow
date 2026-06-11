@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  order-db:
+    image: postgres:15-alpine
+    container_name: shopflow_order_db
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5433:5432"
+    volumes:
+      - order-db-data:/var/lib/postgresql/data
+    networks:
+      - shopflow-network
+
+#  pgadmin:
+#    image: dpage/pgadmin4
+#    container_name: shopflow_pgadmin
+#    restart: always
+#    env_file:
+#      - .env
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+#      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+#    ports:
+#      - "5050:80"
+#    depends_on:
+#      - order-db
+#    networks:
+#      - shopflow-network
+
+volumes:
+  order-db-data:
+
+networks:
+  shopflow-network:
+    driver: bridge
