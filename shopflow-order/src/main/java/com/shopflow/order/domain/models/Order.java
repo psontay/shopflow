@@ -6,6 +6,7 @@ import com.shopflow.order.domain.exceptions.OrderErrorCode;
 import com.shopflow.shared.domain.BaseEntity;
 import com.shopflow.shared.domain.Money;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,6 +35,18 @@ public class Order extends BaseEntity {
         this.orderStatus = OrderStatus.PENDING;
         this.paymentStatus = PaymentStatus.PENDING;
         this.registerEvent(new OrderCreatedEvent(orderId));
+        this.orderItems = new ArrayList<>();
+    }
+
+    Order(UUID id, UUID customerId, OrderStatus orderStatus, String shippingAddress, PaymentType paymentType,
+          PaymentStatus paymentStatus, double discountMultiplier, Instant createdAt, Instant updatedAt){
+        super(id, createdAt, updatedAt);
+        this.customerId = customerId;
+        this.orderStatus = orderStatus;
+        this.shippingAddress = shippingAddress;
+        this.paymentType = paymentType;
+        this.paymentStatus = paymentStatus;
+        this.discountMultiplier = discountMultiplier;
         this.orderItems = new ArrayList<>();
     }
 

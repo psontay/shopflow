@@ -13,7 +13,7 @@ public class BaseEntity {
     private final Instant createdAt;
     private Instant updatedAt;
     private transient final List<DomainEvent> domainEvents = new ArrayList<>();
-
+    
     protected BaseEntity(UUID id) {
         if (id == null) {
             throw new IllegalArgumentException("Entity Id cannot be null");
@@ -21,6 +21,12 @@ public class BaseEntity {
         this.id = id;
         this.createdAt = Instant.now();
         this.updatedAt = this.createdAt;
+    }
+
+    protected BaseEntity(UUID id, Instant createdAt, Instant updatedAt) {
+        this.id = id;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     protected void registerEvent(DomainEvent event) {
