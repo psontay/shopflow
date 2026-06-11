@@ -26,9 +26,14 @@ public class OrderItemEntity {
     private UUID id;
     @Column(nullable = false)
     private UUID productId;
-    @Column(nullable = false, precision = 19, scale = 4)
+    @Column(nullable = false)
+    private int quantity;
+    @Column(nullable = false,
+            precision = 19,
+            scale = 4)
     private BigDecimal unitPriceAmount;
-    @Column(nullable = false, length = 3)
+    @Column(nullable = false,
+            length = 3)
     private String unitPriceCurrency;
 
 }

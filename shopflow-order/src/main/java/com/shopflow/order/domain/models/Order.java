@@ -52,7 +52,8 @@ public class Order extends BaseEntity {
             throw new OrderDomainException(OrderErrorCode.INSUFFICIENT_STOCK);
         }
         for (OrderItem existingItem : this.orderItems) {
-            if (existingItem.getProductId().equals(newItem.getProductId())) {
+            if (existingItem.getProductId()
+                            .equals(newItem.getProductId())) {
                 existingItem.updateQuantity(existingItem.getQuantity() + newItem.getQuantity());
                 super.maskAsUpdated();
                 return;
@@ -73,7 +74,8 @@ public class Order extends BaseEntity {
             throw new IllegalArgumentException("new quantity cannot be negative.");
         }
         for (OrderItem existingItem : this.orderItems) {
-            if (existingItem.getProductId().equals(productId)) {
+            if (existingItem.getProductId()
+                            .equals(productId)) {
                 existingItem.updateQuantity(existingItem.getQuantity() + newQuantity);
                 super.maskAsUpdated();
                 return;
@@ -86,7 +88,8 @@ public class Order extends BaseEntity {
         if (this.orderStatus != OrderStatus.PENDING) {
             throw new OrderDomainException(OrderErrorCode.INVALID_ORDER_STATE);
         }
-        boolean removed = this.orderItems.removeIf(item -> item.getProductId().equals(productId));
+        boolean removed = this.orderItems.removeIf(item -> item.getProductId()
+                                                               .equals(productId));
         if (removed) {
             super.maskAsUpdated();
         }
@@ -115,7 +118,10 @@ public class Order extends BaseEntity {
     }
 
     public Money getTotalAmount() {
-        return this.orderItems.stream().map(OrderItem :: getSubTotal).reduce(Money.zero(), Money :: add).multiply(this.discountMultiplier);
+        return this.orderItems.stream()
+                              .map(OrderItem :: getSubTotal)
+                              .reduce(Money.zero(), Money :: add)
+                              .multiply(this.discountMultiplier);
     }
 
     public void applyDiscount(double multiplier) {
@@ -127,7 +133,37 @@ public class Order extends BaseEntity {
     }
 
     public long countWholesaleItems() {
-        return this.orderItems.stream().filter(item -> item.getQuantity() >= 3).count();
+        return this.orderItems.stream()
+                              .filter(item -> item.getQuantity() >= 3)
+                              .count();
+    }
+
+    public UUID getCustomerId() {
+        return customerId;
+    }
+
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
+    }
+
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
+    }
+
+    public String getShippingAddress() {
+        return shippingAddress;
+    }
+
+    public PaymentType getPaymentType() {
+        return paymentType;
+    }
+
+    public PaymentStatus getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public double getDiscountMultiplier() {
+        return discountMultiplier;
     }
 
 }

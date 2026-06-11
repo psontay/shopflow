@@ -29,7 +29,8 @@ public class OrderController {
         CreateOrderCommand command = request.toCommand();
         UUID orderId = createOrderHandler.handle(command);
         CreateOrderResponse response = new CreateOrderResponse(orderId, "Order create success");
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                             .body(response);
     }
 
 }

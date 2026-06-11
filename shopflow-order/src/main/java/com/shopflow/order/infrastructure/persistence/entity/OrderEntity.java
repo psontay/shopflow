@@ -48,7 +48,9 @@ public class OrderEntity {
     @Column(nullable = false)
     private double discountMultiplier;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private List<OrderItemEntity> items;
 

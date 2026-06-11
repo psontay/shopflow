@@ -27,9 +27,14 @@ public record CreateOrderRequest(
     }
 
     public CreateOrderCommand toCommand() {
-        List<CreateOrderCommand.OrderItemCommand> itemCommands = items.stream().map(i -> new CreateOrderCommand.OrderItemCommand(
-                i.productId(), i.productName(), i.quantity(), Money.of(java.math.BigDecimal.valueOf(i.unitPrice()))
-        )).collect(Collectors.toList());
+        List<CreateOrderCommand.OrderItemCommand> itemCommands = items.stream()
+                                                                      .map(i -> new CreateOrderCommand.OrderItemCommand(
+                                                                              i.productId(),
+                                                                              i.productName(),
+                                                                              i.quantity(),
+                                                                              Money.of(java.math.BigDecimal.valueOf(i.unitPrice()))
+                                                                      ))
+                                                                      .collect(Collectors.toList());
         return new CreateOrderCommand(customerId, shippingAddress, itemCommands);
     }
 

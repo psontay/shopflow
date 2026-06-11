@@ -28,7 +28,8 @@ public class OrderItem extends BaseEntity {
     }
 
     public Money getSubTotal() {
-        return Money.of(this.unitPrice.amount().multiply(java.math.BigDecimal.valueOf(quantity)));
+        return Money.of(this.unitPrice.amount()
+                                      .multiply(java.math.BigDecimal.valueOf(quantity)));
     }
 
     void updateQuantity(int newQuantity) {
