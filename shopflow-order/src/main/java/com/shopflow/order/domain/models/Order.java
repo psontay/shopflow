@@ -38,8 +38,8 @@ public class Order extends BaseEntity {
         this.orderItems = new ArrayList<>();
     }
 
-    Order(UUID id, UUID customerId, OrderStatus orderStatus, String shippingAddress, PaymentType paymentType,
-          PaymentStatus paymentStatus, double discountMultiplier, Instant createdAt, Instant updatedAt){
+    private Order(UUID id, UUID customerId, OrderStatus orderStatus, String shippingAddress, PaymentType paymentType,
+                  PaymentStatus paymentStatus, double discountMultiplier, Instant createdAt, Instant updatedAt) {
         super(id, createdAt, updatedAt);
         this.customerId = customerId;
         this.orderStatus = orderStatus;
@@ -48,6 +48,15 @@ public class Order extends BaseEntity {
         this.paymentStatus = paymentStatus;
         this.discountMultiplier = discountMultiplier;
         this.orderItems = new ArrayList<>();
+    }
+
+    public static Order reconstruct(UUID id, UUID customerId, OrderStatus orderStatus,
+                                    String shippingAddress, PaymentType paymentType,
+                                    PaymentStatus paymentStatus, double discountMultiplier,
+                                    Instant createdAt, Instant updatedAt) {
+        return new Order(id, customerId, orderStatus, shippingAddress,
+                         paymentType, paymentStatus, discountMultiplier,
+                         createdAt, updatedAt);
     }
 
     public List<OrderItem> getOrderItem() {

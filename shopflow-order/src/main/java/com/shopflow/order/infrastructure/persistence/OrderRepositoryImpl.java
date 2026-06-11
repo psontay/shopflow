@@ -2,6 +2,7 @@ package com.shopflow.order.infrastructure.persistence;
 
 import com.shopflow.order.domain.models.Order;
 import com.shopflow.order.domain.repositories.OrderRepository;
+import com.shopflow.order.infrastructure.persistence.entity.OrderEntity;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -10,19 +11,29 @@ import java.util.UUID;
 @Repository
 public class OrderRepositoryImpl implements OrderRepository {
 
+    private final JpaOrderRepository jpaOrderRepository;
+    private final OrderPersistenceMapper mapper;
+
+    public OrderRepositoryImpl(JpaOrderRepository jpaOrderRepository, OrderPersistenceMapper mapper) {
+        this.jpaOrderRepository = jpaOrderRepository;
+        this.mapper = mapper;
+    }
+
     @Override
     public void save(Order order) {
-        System.out.println("Save to database by Hibernate");
+        OrderEntity entity = mapper.toEntity(order);
+        jpaOrderRepository.save(entity);
     }
 
     @Override
     public Optional<Order> findById(UUID id) {
-        return Optional.empty();
+        return jpaOrderRepository.findById(id)
+                                 .map(mapper :: toDomain);
     }
 
     @Override
     public void deleteById(UUID orderId) {
-        System.out.println("Delete order");
+        jpaOrderRepository.deleteById(orderId);
     }
 
 }

@@ -13,17 +13,15 @@ public class BaseEntity {
     private final Instant createdAt;
     private Instant updatedAt;
     private transient final List<DomainEvent> domainEvents = new ArrayList<>();
-    
+
     protected BaseEntity(UUID id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Entity Id cannot be null");
-        }
-        this.id = id;
-        this.createdAt = Instant.now();
-        this.updatedAt = this.createdAt;
+        this(id, Instant.now(), Instant.now());
     }
 
     protected BaseEntity(UUID id, Instant createdAt, Instant updatedAt) {
+        if (id == null) {
+            throw new IllegalArgumentException("Entity Id cannot be null");
+        }
         this.id = id;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;

@@ -42,7 +42,9 @@ public class OrderPersistenceMapper {
     }
 
     public Order toDomain(OrderEntity entity) {
-        Order order = new Order(entity.getId(), entity.getCustomerId(), entity.getShippingAddress());
+        Order order = Order.reconstruct(entity.getId(), entity.getCustomerId(), entity.getOrderStatus(),
+                                        entity.getShippingAddress(), entity.getPaymentType(), entity.getPaymentStatus(),
+                                        entity.getDiscountMultiplier(), entity.getCreatedAt(), entity.getUpdatedAt());
         entity.getItems()
               .forEach(itemEntity -> {
                   OrderItem item = new OrderItem(
@@ -55,6 +57,7 @@ public class OrderPersistenceMapper {
                   order.addItem(item);
               });
 
+        order.clearDomainEvents();
         return order;
     }
 
