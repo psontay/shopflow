@@ -1,8 +1,10 @@
-package com.shopflow.order.infrastructure.persistence;
+package com.shopflow.order.infrastructure.persistence.impl;
 
 import com.shopflow.order.domain.models.Order;
 import com.shopflow.order.domain.repositories.OrderRepository;
+import com.shopflow.order.infrastructure.persistence.JpaOrderRepository;
 import com.shopflow.order.infrastructure.persistence.entity.OrderEntity;
+import com.shopflow.order.infrastructure.persistence.mapper.OrderPersistenceMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;

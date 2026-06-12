@@ -1,4 +1,4 @@
-package com.shopflow.order.infrastructure.persistence;
+package com.shopflow.order.infrastructure.persistence.mapper;
 
 import com.shopflow.order.domain.models.Order;
 import com.shopflow.order.domain.models.OrderItem;

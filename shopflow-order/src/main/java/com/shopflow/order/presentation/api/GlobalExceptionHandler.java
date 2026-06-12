@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleSystemException(Exception ex) {
         ApiResponse<Void> response = ApiResponse.internalServerError(
                 null,
-                "System unavailable!"
+                "System unavailable!" + ex
                                                                     );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                              .body(response);

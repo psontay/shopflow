@@ -15,4 +15,14 @@ public record OrderCreatedEvent(
         this(UUID.randomUUID(), Instant.now(), orderId);
     }
 
+    @Override
+    public String aggregateType() {
+        return "ORDER";
+    }
+
+    @Override
+    public String aggregateId() {
+        return this.orderId.toString();
+    }
+
 }

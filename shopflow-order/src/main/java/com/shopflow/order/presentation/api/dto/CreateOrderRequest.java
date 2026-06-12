@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -21,8 +22,12 @@ public record CreateOrderRequest(
 ) {
 
     public record OrderItemRequest(
-            @NotNull UUID productId, String productName, int quantity, double unitPrice
+            @NotNull UUID productId, String productName, int quantity, MoneyRequest unitPrice
     ) {
+
+    }
+
+    public record MoneyRequest(@NotNull BigDecimal amount, @NotBlank String currency) {
 
     }
 
@@ -32,7 +37,8 @@ public record CreateOrderRequest(
                                                                               i.productId(),
                                                                               i.productName(),
                                                                               i.quantity(),
-                                                                              Money.of(java.math.BigDecimal.valueOf(i.unitPrice()))
+                                                                              Money.of(i.unitPrice()
+                                                                                        .amount())
                                                                       ))
                                                                       .collect(Collectors.toList());
         return new CreateOrderCommand(customerId, shippingAddress, itemCommands);

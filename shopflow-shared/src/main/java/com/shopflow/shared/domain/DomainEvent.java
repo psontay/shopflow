@@ -9,4 +9,8 @@ public interface DomainEvent {
 
     Instant occurredOn();
 
+    String aggregateType();
+
+    String aggregateId();
+
 }
