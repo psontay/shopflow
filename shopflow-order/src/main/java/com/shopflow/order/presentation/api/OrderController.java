@@ -33,16 +33,20 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<CreateOrderResponse> createOrder(@Valid @RequestBody CreateOrderRequest request) {
+    public ResponseEntity<ApiResponse<CreateOrderResponse>> createOrder(
+            @Valid @RequestBody CreateOrderRequest request) {
         CreateOrderCommand command = request.toCommand();
         UUID orderId = createOrderHandler.handle(command);
         CreateOrderResponse response = new CreateOrderResponse(orderId, "Order create success");
+        ApiResponse<CreateOrderResponse> wrappedResponse = ApiResponse.created(response,
+                                                                               "Create order success with order" +
+                                                                                       " id: " + orderId);
         return ResponseEntity.status(HttpStatus.CREATED)
-                             .body(response);
+                             .body(wrappedResponse);
     }
 
     @GetMapping("/{customerId}")
-    public ResponseEntity<ApiResponse<List<OrderSummaryResponse>>> getCustomerOrders(@PathVariable("customerId") UUID customerId) {
+    public ResponseEntity<ApiResponse<List<OrderSummaryResponse>>> getCustomerOrders(@PathVariable UUID customerId) {
         List<OrderSummaryResponse> data = orderQueryHandler.getCustomerOrders(customerId);
         ApiResponse<List<OrderSummaryResponse>> wrappedResponse = ApiResponse.success(data, "Get order history " +
                 "success for user id: " + customerId.toString());
