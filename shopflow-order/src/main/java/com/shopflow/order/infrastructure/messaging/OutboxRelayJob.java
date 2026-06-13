@@ -3,6 +3,7 @@ package com.shopflow.order.infrastructure.messaging;
 import com.shopflow.order.infrastructure.persistence.JpaOutboxRepository;
 import com.shopflow.order.infrastructure.persistence.entity.OutboxEntity;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +14,11 @@ import java.util.List;
 public class OutboxRelayJob {
 
     private final JpaOutboxRepository jpaOutboxRepository;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public OutboxRelayJob(JpaOutboxRepository jpaOutboxRepository) {
+    public OutboxRelayJob(JpaOutboxRepository jpaOutboxRepository, KafkaTemplate<String, String> kafkaTemplate) {
         this.jpaOutboxRepository = jpaOutboxRepository;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Scheduled(fixedDelay = 10000)
@@ -27,7 +30,7 @@ public class OutboxRelayJob {
         log.info("[Outbox Relay] Start processing {} unsent events", events.size());
         for (OutboxEntity event : events) {
             try {
-                log.info("Sent event: [{}] - Payload: {}", event.getEventType(), event.getPayload());
+                kafkaTemplate.send("shopflow.order.events", event.getAggregateId(), event.getPayload());
                 jpaOutboxRepository.delete(event);
                 log.info("Deleted event [{}] success.", event.getId());
             } catch (Exception e) {
