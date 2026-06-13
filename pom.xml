@@ -12,6 +12,7 @@
     <modules>
         <module>shopflow-order</module>
         <module>shopflow-shared</module>
+        <module>shopflow-identity</module>
     </modules>
 
     <properties>
