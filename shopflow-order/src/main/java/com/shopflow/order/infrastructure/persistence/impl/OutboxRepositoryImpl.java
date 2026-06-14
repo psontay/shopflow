@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
-public class JpaOutboxRepositoryImpl implements OutboxRepository {
+public class OutboxRepositoryImpl implements OutboxRepository {
 
     private final JpaOutboxRepository jpaOutboxRepository;
     private final OutboxPersistenceMapper mapper;
 
-    public JpaOutboxRepositoryImpl(JpaOutboxRepository jpaOutboxRepository, OutboxPersistenceMapper mapper) {
+    public OutboxRepositoryImpl(JpaOutboxRepository jpaOutboxRepository, OutboxPersistenceMapper mapper) {
         this.jpaOutboxRepository = jpaOutboxRepository;
         this.mapper = mapper;
     }
