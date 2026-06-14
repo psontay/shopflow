@@ -33,6 +33,10 @@ public class RegisterUserCommandHandler {
         if (userRepository.existsByEmail(command.email())) {
             throw new UserDomainException(UserErrorCode.EMAIL_ALREADY_IN_USE);
         }
+        if (! command.rawPassword()
+                     .equals(command.confirmPassword())) {
+            throw new UserDomainException(UserErrorCode.CONFIRM_PASSWORD_NOT_MATCH);
+        }
         String hashedPassword = passwordEncoder.encode(command.rawPassword());
         UUID newUserId = UUID.randomUUID();
         User newUser = new User(newUserId, command.username(), command.email(), hashedPassword);

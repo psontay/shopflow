@@ -22,12 +22,15 @@ public record SignUpRequest(
         @Size(min = 6,
                 max = 40,
                 message = "Password must be between 6 and 40 characters")
-        String password
+        String password,
+
+        @NotBlank(message = "Confirm password doesn't match")
+        String confirmPassword
 
 ) {
 
     public RegisterUserCommand toCommand() {
-        return new RegisterUserCommand(username, email, password);
+        return new RegisterUserCommand(username, email, password, confirmPassword);
     }
 
 }
