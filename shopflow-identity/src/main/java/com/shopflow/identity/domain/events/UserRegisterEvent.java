@@ -5,10 +5,10 @@ import com.shopflow.shared.domain.DomainEvent;
 import java.time.Instant;
 import java.util.UUID;
 
-public record UserCreatedEvent(UUID userId, Instant occurredOn, UUID eventId) implements DomainEvent {
+public record UserRegisterEvent(UUID eventId, Instant occurredOn, UUID userId, String email) implements DomainEvent {
 
-    public UserCreatedEvent(UUID userId) {
-        this(UUID.randomUUID(), Instant.now(), userId);
+    public UserRegisterEvent(UUID userId, String email) {
+        this(UUID.randomUUID(), Instant.now(), userId, email);
     }
 
     @Override

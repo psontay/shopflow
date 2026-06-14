@@ -1,6 +1,6 @@
 package com.shopflow.identity.domain.models;
 
-import com.shopflow.identity.domain.events.UserCreatedEvent;
+import com.shopflow.identity.domain.events.UserRegisterEvent;
 import com.shopflow.identity.domain.exceptions.UserDomainException;
 import com.shopflow.identity.domain.exceptions.UserErrorCode;
 import com.shopflow.shared.domain.BaseEntity;
@@ -28,7 +28,7 @@ public class User extends BaseEntity {
         this.email = email;
         this.hashedPassword = password;
         this.userStatus = UserStatus.ACTIVE;
-        this.registerEvent(new UserCreatedEvent(userId));
+        this.registerEvent(new UserRegisterEvent(userId, email));
     }
 
     private User(UUID userId, String username, UserStatus userStatus, String email, String password, Instant createdAt,
