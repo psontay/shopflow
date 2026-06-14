@@ -60,7 +60,7 @@ public class User extends BaseEntity {
         if (this.userStatus == UserStatus.INACTIVE) {
             throw new UserDomainException(UserErrorCode.INVALID_USER_STATE);
         }
-        this.userStatus = UserStatus.ACTIVE;
+        this.userStatus = UserStatus.INACTIVE;
         super.maskAsUpdated();
     }
 
