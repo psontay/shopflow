@@ -11,7 +11,7 @@ public class OrderEventConsumer {
     @KafkaListener(topics = "shopflow.order.events")
     public void listenOrderEvents(String messagePayload) {
         log.info("\n=============================");
-        log.info("[Kafka-Consumer] Got a new message: {}", messagePayload);
+        log.info("[Order Kafka-Consumer] Got a new message: {}", messagePayload);
 
     }
 

@@ -1,5 +1,6 @@
 package com.shopflow.identity.domain.models;
 
+import com.shopflow.identity.domain.events.PasswordChangedEvent;
 import com.shopflow.identity.domain.events.UserRegisterEvent;
 import com.shopflow.identity.domain.exceptions.UserDomainException;
 import com.shopflow.identity.domain.exceptions.UserErrorCode;
@@ -65,6 +66,7 @@ public class User extends BaseEntity {
             throw new IllegalArgumentException("New password cannot be blank.");
         }
         this.hashedPassword = newHashedPassword;
+        this.registerEvent(new PasswordChangedEvent(this.getId()));
         super.maskAsUpdated();
     }
 
