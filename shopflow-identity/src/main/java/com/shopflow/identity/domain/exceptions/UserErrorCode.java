@@ -10,7 +10,9 @@ public enum UserErrorCode implements ErrorCode {
     CONFIRM_PASSWORD_NOT_MATCH("USR-004", "Confirm password not match", HttpStatus.BAD_REQUEST),
     PASSWORD_NOT_MATCH("USR-005", "Password not match", HttpStatus.BAD_REQUEST),
     INVALID_CREDENTIALS("USR-006", "Invalid credentials", HttpStatus.NOT_FOUND),
-    INVALID_USER_STATE("USR-007", "User's status invalid to do this", HttpStatus.BAD_REQUEST);
+    OLD_PASSWORD_NOT_MATCH("USR-007", "Old password not match", HttpStatus.BAD_REQUEST),
+    NEW_PASSWORD_SAME_AS_OLD("USR-008", "New password cannot be the same as the old password", HttpStatus.BAD_REQUEST),
+    INVALID_USER_STATE("USR-010", "User's status invalid to do this", HttpStatus.BAD_REQUEST);
     private final String code;
     private final String message;
     private final HttpStatus httpStatus;

@@ -18,6 +18,10 @@ public class User extends BaseEntity {
 
     private UserStatus userStatus;
 
+    private boolean deleted;
+
+    private Role role;
+
     public User(UUID userId, String username, String email,
                 String password) {
         super(userId);
@@ -28,21 +32,29 @@ public class User extends BaseEntity {
         this.email = email;
         this.hashedPassword = password;
         this.userStatus = UserStatus.ACTIVE;
+        this.deleted = false;
+        this.role = Role.USER;
         this.registerEvent(new UserRegisterEvent(userId, email));
     }
 
-    private User(UUID userId, String username, UserStatus userStatus, String email, String password, Instant createdAt,
+    private User(UUID userId, String username, UserStatus userStatus, Role role, boolean deleted, String email,
+                 String password,
+                 Instant createdAt,
                  Instant updatedAt) {
         super(userId, createdAt, updatedAt);
         this.username = username;
         this.userStatus = userStatus;
+        this.role = role;
+        this.deleted = deleted;
         this.email = email;
         this.hashedPassword = password;
     }
 
-    public static User reconstruct(UUID userId, String username, UserStatus userStatus, String email, String password,
+    public static User reconstruct(UUID userId, String username, UserStatus userStatus, Role role, boolean deleted,
+                                   String email,
+                                   String password,
                                    Instant createdAt, Instant updatedAt) {
-        return new User(userId, username, userStatus, email, password, createdAt, updatedAt);
+        return new User(userId, username, userStatus, role, deleted, email, password, createdAt, updatedAt);
     }
 
     public void changePassword(String newHashedPassword) {
@@ -70,6 +82,19 @@ public class User extends BaseEntity {
         }
         this.userStatus = UserStatus.ACTIVE;
         super.maskAsUpdated();
+    }
+
+    public void softDelete() {
+        this.deleted = true;
+        super.maskAsUpdated();
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public Role getRole() {
+        return role;
     }
 
     public String getUsername() {

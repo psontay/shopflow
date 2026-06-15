@@ -35,6 +35,9 @@ public class JwtTokenProvider implements TokenProviderPort {
                                 .toString())
                    .claim("username", user.getUsername())
                    .claim("email", user.getEmail())
+                   .claim("roles",
+                          user.getRole()
+                              .name())
                    .issuedAt(now)
                    .expiration(expiryDate)
                    .signWith(key)

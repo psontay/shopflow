@@ -11,17 +11,26 @@ public class UserPersistenceMapper {
         return UserEntity.builder()
                          .id(user.getId())
                          .email(user.getEmail())
+                         .role(user.getRole())
                          .password(user.getHashedPassword())
                          .userStatus(user.getUserStatus())
+                         .deleted(user.isDeleted())
                          .createdAt(user.getCreatedAt())
                          .updatedAt(user.getUpdatedAt())
                          .build();
     }
 
     public User toDomain(UserEntity userEntity) {
-        User user = User.reconstruct(userEntity.getId(), userEntity.getUsername(), userEntity.getUserStatus(),
+        User user = User.reconstruct(userEntity.getId(),
+                                     userEntity.getUsername(),
+                                     userEntity.getUserStatus(),
+                                     userEntity.getRole(),
+                                     userEntity.isDeleted()
+                ,
                                      userEntity.getEmail(),
-                                     userEntity.getPassword(), userEntity.getCreatedAt(), userEntity.getUpdatedAt());
+                                     userEntity.getPassword(),
+                                     userEntity.getCreatedAt(),
+                                     userEntity.getUpdatedAt());
         user.clearDomainEvents();
         return user;
     }

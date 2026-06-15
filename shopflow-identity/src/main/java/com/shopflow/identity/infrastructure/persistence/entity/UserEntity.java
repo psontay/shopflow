@@ -1,5 +1,6 @@
 package com.shopflow.identity.infrastructure.persistence.entity;
 
+import com.shopflow.identity.domain.models.Role;
 import com.shopflow.identity.domain.models.UserStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,6 +15,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -29,6 +32,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@SQLDelete(sql = "update users set deleted = true where id=?")
+@SQLRestriction("deleted=false")
 public class UserEntity {
 
     @Id
@@ -42,6 +47,11 @@ public class UserEntity {
     private String password;
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
+    @Column(nullable = false)
+    private boolean deleted = false;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Column(nullable = false)
     private Instant createdAt;

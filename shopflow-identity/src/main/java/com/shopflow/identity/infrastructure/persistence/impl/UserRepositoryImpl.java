@@ -8,6 +8,7 @@ import com.shopflow.identity.infrastructure.persistence.mapper.UserPersistenceMa
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
@@ -39,6 +40,12 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> findByUsername(String username) {
         return jpaUserRepository.findByUsername(username)
+                                .map(mapper :: toDomain);
+    }
+
+    @Override
+    public Optional<User> findById(UUID id) {
+        return jpaUserRepository.findById(id)
                                 .map(mapper :: toDomain);
     }
 
