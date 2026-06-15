@@ -1,5 +1,6 @@
-package com.shopflow.identity.application.security;
+package com.shopflow.identity.infrastructure.security;
 
+import com.shopflow.identity.application.security.TokenProviderPort;
 import com.shopflow.identity.domain.models.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;

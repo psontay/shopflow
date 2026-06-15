@@ -9,7 +9,8 @@ public enum UserErrorCode implements ErrorCode {
     EMAIL_ALREADY_IN_USE("USR-003", "Email already in use", HttpStatus.CONFLICT),
     CONFIRM_PASSWORD_NOT_MATCH("USR-004", "Confirm password not match", HttpStatus.BAD_REQUEST),
     PASSWORD_NOT_MATCH("USR-005", "Password not match", HttpStatus.BAD_REQUEST),
-    INVALID_USER_STATE("USR-006", "User's status invalid to do this", HttpStatus.BAD_REQUEST);
+    INVALID_CREDENTIALS("USR-006", "Invalid credentials", HttpStatus.NOT_FOUND),
+    INVALID_USER_STATE("USR-007", "User's status invalid to do this", HttpStatus.BAD_REQUEST);
     private final String code;
     private final String message;
     private final HttpStatus httpStatus;
