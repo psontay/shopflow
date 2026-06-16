@@ -15,7 +15,9 @@ public enum InventoryErrorCode implements ErrorCode {
     RESERVATION_ALREADY_COMPLETED("INV-006", "Stock reservation has already been completed", HttpStatus.BAD_REQUEST),
     RESERVATION_ALREADY_CANCELED("INV-007", "Stock reservation has already been canceled", HttpStatus.BAD_REQUEST),
 
-    STOCK_LOCKED("INV-008", "Product stock is currently locked for maintenance", HttpStatus.CONFLICT);
+    STOCK_LOCKED("INV-008", "Product stock is currently locked for maintenance", HttpStatus.CONFLICT),
+    PRODUCT_NOT_FOUND("INV-009", "Product not found", HttpStatus.NOT_FOUND),
+    INVALID_ARGUMENT("INV-010", "Arg cannot be null", HttpStatus.BAD_REQUEST);
 
     private final String code;
     private final String message;

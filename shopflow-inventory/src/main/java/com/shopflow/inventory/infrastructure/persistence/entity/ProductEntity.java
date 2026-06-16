@@ -1,4 +1,4 @@
-package com.shopflow.inventory.infrastructure.entity;
+package com.shopflow.inventory.infrastructure.persistence.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

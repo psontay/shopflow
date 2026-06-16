@@ -1,7 +1,7 @@
 package com.shopflow.inventory.infrastructure.persistence.mapper;
 
 import com.shopflow.inventory.domain.models.Product;
-import com.shopflow.inventory.infrastructure.entity.ProductEntity;
+import com.shopflow.inventory.infrastructure.persistence.entity.ProductEntity;
 import org.springframework.stereotype.Component;
 
 @Component
