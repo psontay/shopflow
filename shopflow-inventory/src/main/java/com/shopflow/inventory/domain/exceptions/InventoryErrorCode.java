@@ -9,7 +9,7 @@ public enum InventoryErrorCode implements ErrorCode {
     WAREHOUSE_NOT_FOUND("INV-002", "Warehouse not found", HttpStatus.NOT_FOUND),
 
     INVALID_STOCK_QUANTITY("INV-003", "Stock quantity cannot be negative or zero", HttpStatus.BAD_REQUEST),
-    INSUFFICIENT_STOCK("INV-004", "Insufficient stock for the requested product", HttpStatus.BAD_REQUEST),
+    INSUFFICIENT_STOCK("INV-004", "Insufficient stock for the requested product", HttpStatus.CONFLICT),
 
     RESERVATION_NOT_FOUND("INV-005", "Stock reservation not found or expired", HttpStatus.NOT_FOUND),
     RESERVATION_ALREADY_COMPLETED("INV-006", "Stock reservation has already been completed", HttpStatus.BAD_REQUEST),
