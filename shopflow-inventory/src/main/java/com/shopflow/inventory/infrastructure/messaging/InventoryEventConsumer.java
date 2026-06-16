@@ -52,6 +52,7 @@ public class InventoryEventConsumer {
             acknowledgment.acknowledge();
             log.info("Processing event success and Commit Acknowledgment");
         } catch (JsonProcessingException e) {
+
             acknowledgment.acknowledge();
         } catch (Exception e) {
             throw new RuntimeException(e);
