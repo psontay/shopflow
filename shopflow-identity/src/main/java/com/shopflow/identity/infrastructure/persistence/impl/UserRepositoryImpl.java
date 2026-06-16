@@ -1,7 +1,7 @@
 package com.shopflow.identity.infrastructure.persistence.impl;
 
 import com.shopflow.identity.domain.models.User;
-import com.shopflow.identity.domain.repositories.UserRepository;
+import com.shopflow.identity.domain.repository.UserRepository;
 import com.shopflow.identity.infrastructure.persistence.JpaUserRepository;
 import com.shopflow.identity.infrastructure.persistence.entity.UserEntity;
 import com.shopflow.identity.infrastructure.persistence.mapper.UserPersistenceMapper;

@@ -72,6 +72,7 @@ services:
 
 volumes:
   order-db-data:
+  user-db-data:
 
 networks:
   shopflow-network:

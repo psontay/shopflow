@@ -4,7 +4,7 @@ import com.shopflow.identity.application.outbox.OutboxService;
 import com.shopflow.identity.domain.exceptions.UserDomainException;
 import com.shopflow.identity.domain.exceptions.UserErrorCode;
 import com.shopflow.identity.domain.models.User;
-import com.shopflow.identity.domain.repositories.UserRepository;
+import com.shopflow.identity.domain.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

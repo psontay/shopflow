@@ -1,4 +1,4 @@
-package com.shopflow.identity.domain.repositories;
+package com.shopflow.identity.domain.repository;
 
 import com.shopflow.identity.domain.models.User;
 

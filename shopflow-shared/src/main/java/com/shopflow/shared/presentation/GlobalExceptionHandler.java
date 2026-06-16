@@ -1,8 +1,7 @@
-package com.shopflow.order.presentation.api;
+package com.shopflow.shared.presentation;
 
-import com.shopflow.order.domain.exceptions.OrderDomainException;
+import com.shopflow.shared.domain.DomainException;
 import com.shopflow.shared.domain.ErrorCode;
-import com.shopflow.shared.presentation.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -16,33 +15,31 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(OrderDomainException.class)
-    public ResponseEntity<ApiResponse<Void>> handleDomainException(OrderDomainException ex) {
+    @ExceptionHandler(DomainException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDomainException(DomainException ex) {
         ErrorCode errorCode = ex.getErrorCode();
-
+        HttpStatus status = errorCode != null ? errorCode.getHttpStatus() : HttpStatus.BAD_REQUEST;
+        String message = errorCode != null ? errorCode.getMessage() : ex.getMessage();
         ApiResponse<Void> response = ApiResponse.<Void>builder()
-                                                .status(errorCode.getHttpStatus()
-                                                                 .value())
-                                                .message(errorCode.getMessage())
+                                                .status(status.value())
+                                                .message(message)
                                                 .data(null)
                                                 .timestamp(Instant.now())
                                                 .build();
-
-        return ResponseEntity.status(errorCode.getHttpStatus())
+        return ResponseEntity.status(status)
                              .body(response);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Void>> handleSystemException(Exception ex) {
-        ApiResponse<Void> response = ApiResponse.internalServerError(
-                null,
-                "System unavailable!" + ex
-                                                                    );
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(IllegalArgumentException.class)
+
+    public ResponseEntity<ApiResponse<Void>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        ApiResponse<Void> response = ApiResponse.badRequest(null, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                              .body(response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
+
     public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException ex) {
         String errorMessage = ex.getBindingResult()
                                 .getFieldErrors()
@@ -50,15 +47,18 @@ public class GlobalExceptionHandler {
                                 .map(FieldError :: getDefaultMessage)
                                 .collect(Collectors.joining(", "));
 
-        ApiResponse<Void> response = ApiResponse.badRequest(
-                null,
-                "Data invalid: " + errorMessage
-                                                           );
+        ApiResponse<Void> response = ApiResponse.badRequest(null, "Data invalid: " + errorMessage);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                              .body(response);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<Void>> handleSystemException(Exception ex) {
+        ex.printStackTrace();
+        ApiResponse<Void> response = ApiResponse.internalServerError(null,
+                                                                     "An unexpected system error occurred. Please try again later.");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                             .body(response);
+    }
+
 }
-
-
-
