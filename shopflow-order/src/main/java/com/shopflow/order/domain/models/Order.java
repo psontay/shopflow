@@ -1,6 +1,7 @@
 package com.shopflow.order.domain.models;
 
 import com.shopflow.order.domain.events.OrderCreatedEvent;
+import com.shopflow.order.domain.events.OrderItemSnapshot;
 import com.shopflow.order.domain.exceptions.OrderDomainException;
 import com.shopflow.order.domain.exceptions.OrderErrorCode;
 import com.shopflow.shared.domain.BaseEntity;
@@ -14,10 +15,9 @@ import java.util.UUID;
 
 public class Order extends BaseEntity {
 
+    private final List<OrderItem> orderItems;
     private UUID customerId;
     private OrderStatus orderStatus;
-
-    private final List<OrderItem> orderItems;
     private String shippingAddress;
     private PaymentType paymentType;
     private PaymentStatus paymentStatus;
@@ -34,7 +34,6 @@ public class Order extends BaseEntity {
 
         this.orderStatus = OrderStatus.PENDING;
         this.paymentStatus = PaymentStatus.PENDING;
-        this.registerEvent(new OrderCreatedEvent(orderId));
         this.orderItems = new ArrayList<>();
     }
 
@@ -127,6 +126,18 @@ public class Order extends BaseEntity {
         this.paymentType = type;
         this.paymentStatus = PaymentStatus.SUCCESS;
         this.orderStatus = OrderStatus.PENDING_PAYMENT;
+        super.maskAsUpdated();
+    }
+
+    public void submit() {
+        if (this.orderItems.isEmpty()) {
+            throw new OrderDomainException(OrderErrorCode.INVALID_ORDER_STATE);
+        }
+        List<OrderItemSnapshot> itemSnapshots =
+                orderItems.stream()
+                          .map(item -> new OrderItemSnapshot(item.getProductId(), item.getQuantity()))
+                          .toList();
+        this.registerEvent(new OrderCreatedEvent(this.getId(), itemSnapshots));
         super.maskAsUpdated();
     }
 

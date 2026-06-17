@@ -35,6 +35,7 @@ public class CreateOrderCommandHandler {
         }
         orderRepository.save(newOrder);
         outboxService.saveEvents(newOrder.getDomainEvents());
+        newOrder.submit();
         return newOrder.getId();
     }
 
