@@ -1,8 +1,11 @@
-package com.shopflow.identity.application.queries;
+package com.shopflow.identity.application.commands;
 
+import com.shopflow.identity.application.queries.AuthenticateResult;
 import com.shopflow.identity.application.security.TokenProviderPort;
+import com.shopflow.identity.application.token.RefreshTokenService;
 import com.shopflow.identity.domain.exceptions.UserDomainException;
 import com.shopflow.identity.domain.exceptions.UserErrorCode;
+import com.shopflow.identity.domain.models.RefreshToken;
 import com.shopflow.identity.domain.models.User;
 import com.shopflow.identity.domain.models.UserStatus;
 import com.shopflow.identity.domain.repository.UserRepository;
@@ -12,20 +15,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional()
-public class AuthenticateUserQueryHandler {
+public class AuthenticateUserCommandHandler {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProviderPort tokenProviderPort;
+    private final RefreshTokenService refreshTokenService;
 
-    public AuthenticateUserQueryHandler(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                                        TokenProviderPort tokenProviderPort) {
+    public AuthenticateUserCommandHandler(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                                          TokenProviderPort tokenProviderPort,
+                                          RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenProviderPort = tokenProviderPort;
+        this.refreshTokenService = refreshTokenService;
     }
 
-    public String handle(AuthenticateUserQuery query) {
+    public AuthenticateResult handle(AuthenticateUserCommand query) {
         User user = userRepository.findByUsername(query.username())
                                   .orElseThrow(() -> new UserDomainException(
                                           UserErrorCode.USER_NOT_FOUND));
@@ -39,7 +45,9 @@ public class AuthenticateUserQueryHandler {
         if (! isPasswordMatch) {
             throw new UserDomainException(UserErrorCode.INVALID_CREDENTIALS);
         }
-        return tokenProviderPort.generateAccessToken(user);
+        String accessToken = tokenProviderPort.generateAccessToken(user);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+        return new AuthenticateResult(accessToken, refreshToken.getToken());
     }
 
 }

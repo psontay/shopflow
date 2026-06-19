@@ -8,8 +8,10 @@ import com.shopflow.identity.infrastructure.persistence.entity.UserEntity;
 import com.shopflow.identity.infrastructure.persistence.mapper.RefreshTokenPersistenceMapper;
 import com.shopflow.identity.infrastructure.persistence.mapper.UserPersistenceMapper;
 
+import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
+@Repository
 public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
 
     private final JpaRefreshTokenRepository jpaRefreshTokenRepository;
@@ -34,6 +36,19 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
     public void deleteByUser(User user) {
         UserEntity userEntity = userPersistenceMapper.toEntity(user);
         jpaRefreshTokenRepository.deleteByUser(userEntity);
+    }
+
+    @Override
+    public RefreshToken save(RefreshToken refreshToken) {
+        var entity = refreshTokenPersistenceMapper.toEntity(refreshToken);
+        var savedEntity = jpaRefreshTokenRepository.save(entity);
+        return refreshTokenPersistenceMapper.toDomain(savedEntity);
+    }
+
+    @Override
+    public void delete(RefreshToken refreshToken) {
+        var entity = refreshTokenPersistenceMapper.toEntity(refreshToken);
+        jpaRefreshTokenRepository.delete(entity);
     }
 
 }
