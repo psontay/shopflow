@@ -1,0 +1,17 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/target/*.jar
+!**/target/classes/
+*.class
+
+# Tiêu chuẩn bỏ qua các file không cần thiết cho Docker
+.git
+.gitignore
+.idea
+*.iml
+.DS_Store
+*.log
+
+# Bỏ qua Dockerfile
+Dockerfile
+docker-compose*.yml
