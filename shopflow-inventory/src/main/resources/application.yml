@@ -28,5 +28,9 @@ spring:
       enable-auto-commit: false
     listener:
       ack-mode: manual_immediate
+  cache:
+    type: redis
+    redis:
+      time-to-live: 5m
 server:
   port: 8083
