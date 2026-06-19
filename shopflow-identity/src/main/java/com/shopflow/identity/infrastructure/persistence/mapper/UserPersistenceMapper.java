@@ -17,6 +17,7 @@ public class UserPersistenceMapper {
                          .deleted(user.isDeleted())
                          .createdAt(user.getCreatedAt())
                          .updatedAt(user.getUpdatedAt())
+                         .username(user.getUsername())
                          .build();
     }
 

@@ -6,6 +6,7 @@ import com.shopflow.inventory.domain.models.Product;
 import com.shopflow.inventory.domain.repository.ProductRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,8 @@ public class ReserveStockCommandHandler {
     }
 
     @Transactional
+    @CacheEvict(value = "inventory-availability",
+            key = "#p0.productId()")
     public void handle(ReserveStockCommand command) {
         log.info("Reserve stock processing. ProductID: {}, Quantity: {}", command.productId(), command.quantity());
         Product product = productRepository.findById(command.productId())

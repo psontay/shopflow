@@ -30,7 +30,7 @@ public class OutboxRelayJob {
         log.info("[Outbox Relay] Start processing {} unsent events", events.size());
         for (OutboxEntity event : events) {
             try {
-                kafkaTemplate.send("shopflow.order.events", event.getAggregateId(), event.getPayload());
+                kafkaTemplate.send("order-events", event.getAggregateId(), event.getPayload());
                 jpaOutboxRepository.delete(event);
                 log.info("Deleted event [{}] success.", event.getId());
             } catch (Exception e) {

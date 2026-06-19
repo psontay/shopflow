@@ -1,5 +1,7 @@
 package com.shopflow.order.infrastructure.security;
 
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,8 +18,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
+import javax.crypto.SecretKey;
 
 @Configuration
 @EnableWebSecurity
@@ -58,10 +59,11 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        SecretKeySpec secretKey = new SecretKeySpec(jwtSecretKey.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        byte[] keyBytes = Decoders.BASE64.decode(jwtSecretKey);
+        SecretKey secretKey = Keys.hmacShaKeyFor(keyBytes);
         log.info("=========JWT SECRET KEY===========>>>>>" + jwtSecretKey);
         return NimbusJwtDecoder.withSecretKey(secretKey)
-                               .macAlgorithm(MacAlgorithm.HS256)
+                               .macAlgorithm(MacAlgorithm.HS384)
                                .build();
     }
 

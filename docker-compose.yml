@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_DB: ${POSTGRES_ORDER_DB}
     ports:
       - "5433:5432"
     volumes:
@@ -24,29 +24,30 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_DB: ${POSTGRES_USER_DB}
     ports:
       - "5434:5432"
     volumes:
       - user-db-data:/var/lib/postgresql/data
     networks:
       - shopflow-network
+  inventory-db:
+    image: postgres:15-alpine
+    container_name: shopflow_inventory_db
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_INVENTORY_DB}
+    ports:
+      - "5435:5432"
+    volumes:
+      - inventory-db-data:/var/lib/postgresql/data
+    networks:
+      - shopflow-network
 
-    #  pgadmin:
-    #    image: dpage/pgadmin4
-    #    container_name: shopflow_pgadmin
-    #    restart: always
-    #    env_file:
-    #      - .env
-    #    environment:
-    #      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-    #      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-    #    ports:
-    #      - "5050:80"
-    #    depends_on:
-    #      - order-db
-    #    networks:
-    #      - shopflow-network
   kafka:
     image: apache/kafka:3.7.0
     container_name: shopflow_kafka
@@ -68,11 +69,20 @@ services:
       - KAFKA_NUM_PARTITIONS=3
     networks:
       - shopflow-network
+  redis:
+    image: redis:7-alpine
+    container_name: shopflow_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - shopflow-network
 
 
 volumes:
   order-db-data:
   user-db-data:
+  inventory-db-data:
 
 networks:
   shopflow-network:

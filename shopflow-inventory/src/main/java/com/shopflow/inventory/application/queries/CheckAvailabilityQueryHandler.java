@@ -6,6 +6,7 @@ import com.shopflow.inventory.domain.models.Product;
 import com.shopflow.inventory.domain.repository.ProductRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,8 @@ public class CheckAvailabilityQueryHandler {
         this.productRepository = productRepository;
     }
 
+    @Cacheable(value = "inventory-availability",
+            key = "#query.productId()")
     @Transactional(readOnly = true)
     public ProductAvailabilityResponse handle(CheckAvailabilityQuery query) {
         log.debug("Checking stock quantity for Product ID: {}", query.productId());

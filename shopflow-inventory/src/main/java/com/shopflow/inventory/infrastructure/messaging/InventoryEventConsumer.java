@@ -9,7 +9,6 @@ import com.shopflow.inventory.infrastructure.persistence.JpaProcessedEventReposi
 import com.shopflow.inventory.infrastructure.persistence.entity.ProcessedEventEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -40,6 +39,7 @@ public class InventoryEventConsumer {
             groupId = "inventory-service-group")
     public void handleOrderCreateEvent(@Payload String messagePayload, Acknowledgment acknowledgment) {
         log.info("Get event from Kafka. Processing...");
+        log.info("RAW PAYLOAD: {}", messagePayload);
         try {
             JsonNode rootNode = objectMapper.readTree(messagePayload);
             String eventType = rootNode.path("eventType")
@@ -47,8 +47,10 @@ public class InventoryEventConsumer {
             String eventId = rootNode.path("eventId")
                                      .asText();
             if ("OrderCreatedEvent".equals(eventType) && ! eventId.isBlank()) {
-                try {
-                    processedEventRepository.saveAndFlush(new ProcessedEventEntity(eventId, Instant.now()));
+                boolean alreadyProcessed = processedEventRepository.existsById(eventId);
+                if (alreadyProcessed) {
+
+                } else {
                     log.debug("Lock eventID: {}", eventId);
                     JsonNode itemsNode = rootNode.path("items");
                     if (itemsNode.isArray()) {
@@ -62,15 +64,13 @@ public class InventoryEventConsumer {
                             reserveStockCommandHandler.handle(command);
                         }
                     }
-                } catch (DataIntegrityViolationException e) {
-                    log.warn("Warning duplicate event: {}", eventId);
+                    processedEventRepository.save(new ProcessedEventEntity(eventId, Instant.now()));
                 }
 
             }
             acknowledgment.acknowledge();
             log.info("Processing event success and Commit Acknowledgment");
         } catch (JsonProcessingException e) {
-
             acknowledgment.acknowledge();
         }
     }

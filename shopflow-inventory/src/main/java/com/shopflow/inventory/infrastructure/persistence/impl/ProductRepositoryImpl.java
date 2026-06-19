@@ -26,8 +26,16 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public void save(Product product) {
-        ProductEntity entity = mapper.toEntity(product);
-        jpaProductRepository.save(entity);
+        Optional<ProductEntity> existingEntityOpt = jpaProductRepository.findById(product.getId());
+        if (existingEntityOpt.isPresent()) {
+            ProductEntity existingEntity = existingEntityOpt.get();
+            existingEntity.setAvailableQuantity(product.getAvailableQuantity());
+            existingEntity.setReservedQuantity(product.getReservedQuantity());
+            existingEntity.setUpdatedAt(product.getUpdatedAt());
+        } else {
+            ProductEntity newEntity = mapper.toEntity(product);
+            jpaProductRepository.save(newEntity);
+        }
         log.debug("Save product id: {} success.", product.getId());
     }
 

@@ -10,11 +10,12 @@ public record OrderCreatedEvent(
         UUID eventId,
         UUID orderId,
         List<OrderItemSnapshot> items,
-        Instant occurredOn
+        Instant occurredOn,
+        String eventType
 ) implements DomainEvent {
 
     public OrderCreatedEvent(UUID orderId, List<OrderItemSnapshot> items) {
-        this(UUID.randomUUID(), orderId, items, Instant.now());
+        this(UUID.randomUUID(), orderId, items, Instant.now(), "OrderCreatedEvent");
     }
 
     @Override
