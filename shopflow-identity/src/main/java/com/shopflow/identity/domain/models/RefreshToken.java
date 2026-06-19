@@ -21,4 +21,20 @@ public class RefreshToken {
         return expiryDate.compareTo(Instant.now()) < 0;
     }
 
+    public UUID getId() {
+        return id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public Instant getExpiryDate() {
+        return expiryDate;
+    }
+
 }
