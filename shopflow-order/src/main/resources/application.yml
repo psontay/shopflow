@@ -27,6 +27,12 @@ spring:
       auto-offset-reset: earliest
     listener:
       ack-mode: manual
+  resilience4j.circuitbreaker:
+    instances:
+      paymentService:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
 server:
   port: 8081
 

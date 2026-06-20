@@ -46,6 +46,8 @@ public class InventoryEventConsumer {
                                        .asText();
             String eventId = rootNode.path("eventId")
                                      .asText();
+            String orderIdStr = rootNode.path("aggregateId")
+                                        .asText();
             if ("OrderCreatedEvent".equals(eventType) && ! eventId.isBlank()) {
                 boolean alreadyProcessed = processedEventRepository.existsById(eventId);
                 if (alreadyProcessed) {
@@ -60,7 +62,8 @@ public class InventoryEventConsumer {
                             int quantity = item.path("quantity")
                                                .asInt();
                             log.debug("Process reserve stock. ProductID: {}, Quantity: {}", productId, quantity);
-                            ReserveStockCommand command = new ReserveStockCommand(productId, quantity);
+                            UUID orderId = UUID.fromString(orderIdStr);
+                            ReserveStockCommand command = new ReserveStockCommand(orderId, productId, quantity);
                             reserveStockCommandHandler.handle(command);
                         }
                     }

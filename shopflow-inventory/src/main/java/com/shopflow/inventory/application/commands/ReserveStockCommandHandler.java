@@ -1,5 +1,7 @@
 package com.shopflow.inventory.application.commands;
 
+import com.shopflow.inventory.application.outbox.OutboxRepository;
+import com.shopflow.inventory.domain.events.StockReservationFailedEvent;
 import com.shopflow.inventory.domain.exceptions.InventoryDomainException;
 import com.shopflow.inventory.domain.exceptions.InventoryErrorCode;
 import com.shopflow.inventory.domain.models.Product;
@@ -17,24 +19,37 @@ public class ReserveStockCommandHandler {
 
     private final ProductRepository productRepository;
 
-    public ReserveStockCommandHandler(ProductRepository productRepository) {
+    private final OutboxRepository outboxRepository;
+
+    public ReserveStockCommandHandler(ProductRepository productRepository, OutboxRepository outboxRepository) {
         this.productRepository = productRepository;
+        this.outboxRepository = outboxRepository;
     }
 
     @Transactional
     @CacheEvict(value = "inventory-availability",
             key = "#p0.productId()")
     public void handle(ReserveStockCommand command) {
-        log.info("Reserve stock processing. ProductID: {}, Quantity: {}", command.productId(), command.quantity());
-        Product product = productRepository.findById(command.productId())
-                                           .orElseThrow(() -> {
-                                               log.warn("Cannot found Product ID: {}", command.productId());
-                                               return new InventoryDomainException(InventoryErrorCode.PRODUCT_NOT_FOUND);
-                                           });
+        log.info("Reserve stock processing. OrderId: {}, ProductID: {}, Quantity: {}",
+                 command.orderId(),
+                 command.productId(),
+                 command.quantity());
+        try {
+            Product product = productRepository.findById(command.productId())
+                                               .orElseThrow(() -> {
+                                                   log.warn("Cannot found Product ID: {}", command.productId());
+                                                   return new InventoryDomainException(InventoryErrorCode.PRODUCT_NOT_FOUND);
+                                               });
+            product.reserveStock(command.quantity());
+            productRepository.save(product);
+            log.info("Reserve stock successfully. ProductID: {}", command.productId());
 
-        product.reserveStock(command.quantity());
-        productRepository.save(product);
-        log.info("Reserve stock successfully. ProductID: {}", command.productId());
+        } catch (InventoryDomainException e) {
+            log.warn("Saga Compensating: Out of stock, cancel for OrderID: {}", command.orderId());
+            StockReservationFailedEvent failedEvent = new StockReservationFailedEvent(command.orderId(), e.getMessage());
+            outboxRepository.saveEvents(java.util.List.of(failedEvent));
+        }
+
     }
 
 }
