@@ -2,6 +2,8 @@ package com.shopflow.identity.domain.models;
 
 import com.shopflow.identity.domain.events.PasswordChangedEvent;
 import com.shopflow.identity.domain.events.UserRegisterEvent;
+import com.shopflow.identity.domain.exceptions.IdentityDomainException;
+import com.shopflow.identity.domain.exceptions.IdentityErrorCode;
 import com.shopflow.identity.domain.exceptions.UserDomainException;
 import com.shopflow.identity.domain.exceptions.UserErrorCode;
 import com.shopflow.shared.domain.BaseEntity;
@@ -32,7 +34,7 @@ public class User extends BaseEntity {
         this.username = username;
         this.email = email;
         this.hashedPassword = password;
-        this.userStatus = UserStatus.ACTIVE;
+        this.userStatus = UserStatus.PENDING_VERIFICATION;
         this.deleted = false;
         this.role = Role.USER;
         this.registerEvent(new UserRegisterEvent(userId, email));
@@ -88,6 +90,14 @@ public class User extends BaseEntity {
 
     public void softDelete() {
         this.deleted = true;
+        super.maskAsUpdated();
+    }
+
+    public void verify() {
+        if (this.userStatus != UserStatus.PENDING_VERIFICATION) {
+            throw new IdentityDomainException(IdentityErrorCode.INVALID_USER_STATE);
+        }
+        this.userStatus = UserStatus.ACTIVE;
         super.maskAsUpdated();
     }
 
