@@ -1,5 +1,6 @@
 package com.shopflow.order.domain.models;
 
+import com.shopflow.order.domain.events.OrderCancelledEvent;
 import com.shopflow.order.domain.events.OrderCreatedEvent;
 import com.shopflow.order.domain.events.OrderItemSnapshot;
 import com.shopflow.order.domain.exceptions.OrderDomainException;
@@ -141,13 +142,14 @@ public class Order extends BaseEntity {
         super.maskAsUpdated();
     }
 
-    public void cancel() {
+    public void cancel(String reason) {
         boolean canNotCancel = (this.orderStatus == OrderStatus.CANCELED || this.orderStatus == OrderStatus.SHIPPED || this.orderStatus == OrderStatus.SUCCESS);
         if (canNotCancel) {
             throw new OrderDomainException(OrderErrorCode.INVALID_ORDER_STATE);
         }
         this.orderStatus = OrderStatus.CANCELED;
         super.maskAsUpdated();
+        this.registerEvent(new OrderCancelledEvent(this.getId(), reason));
     }
 
     public Money getTotalAmount() {

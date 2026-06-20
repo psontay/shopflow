@@ -23,7 +23,7 @@ public class CancelOrderCommandHandler {
     public void handle(CancelOrderCommand command) {
         Order order = orderRepository.findById(command.orderId())
                                      .orElseThrow(() -> new OrderDomainException(OrderErrorCode.ORDER_NOT_FOUND));
-        order.cancel();
+        order.cancel(command.reason());
         orderRepository.save(order);
         outboxService.saveEvents(order.getDomainEvents());
         order.clearDomainEvents();
