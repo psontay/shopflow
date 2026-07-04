@@ -3,6 +3,7 @@ package com.shopflow.inventory.application.queries;
 import com.shopflow.inventory.domain.exceptions.InventoryDomainException;
 import com.shopflow.inventory.domain.exceptions.InventoryErrorCode;
 import com.shopflow.inventory.domain.repository.ProductRepository;
+import com.shopflow.shared.infrastructure.cache.CacheResult;
 import com.shopflow.shared.infrastructure.cache.DistributedCacheService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,12 +31,14 @@ public class CheckAvailabilityQueryHandler {
         ProductAvailabilityResponse response = cacheService.getWithDoubleCheckLock(cacheKey, lockKey, () -> {
             log.debug("Cache miss => Get fromd Database find product ID: {}", query.productId());
             return productRepository.findById(query.productId())
-                                    .map(p -> new ProductAvailabilityResponse(p.getId(),
-                                                                              p.getName(),
-                                                                              p.getAvailableQuantity(),
-                                                                              p.getAvailableQuantity() > 0, false))
-                                    .orElseGet(() -> ProductAvailabilityResponse.notFound(query.productId()));
-        }, 60);
+                                    .map(p -> CacheResult.ofRealData(new ProductAvailabilityResponse(p.getId(),
+                                                                                                     p.getName(),
+                                                                                                     p.getAvailableQuantity(),
+                                                                                                     p.getAvailableQuantity() > 0,
+                                                                                                     false), 60L))
+                                    .orElseGet(() -> CacheResult.ofNullObject(ProductAvailabilityResponse.notFound(query.productId()),
+                                                                              1L));
+        });
         if (response.isNotFound()) {
             throw new InventoryDomainException(InventoryErrorCode.PRODUCT_NOT_FOUND);
         }

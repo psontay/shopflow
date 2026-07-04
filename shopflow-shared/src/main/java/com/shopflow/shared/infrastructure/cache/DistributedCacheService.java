@@ -23,14 +23,13 @@ public class DistributedCacheService {
         this.redisTemplate = redisTemplate;
     }
 
-    public <T> T getWithDoubleCheckLock(String cacheKey, String lockKey, Supplier<T> dbQuery, long cacheTtlMinutes) {
+    public <T> T getWithDoubleCheckLock(String cacheKey, String lockKey, Supplier<CacheResult<T>> dbQuery) {
         // check cache
         T cachedData = (T) redisTemplate.opsForValue()
                                         .get(cacheKey);
         if (cachedData != null) { // cache hit
             return cachedData;
         }
-
         // if cache miss, try to get lock
         RLock lock = redissonClient.getLock(lockKey);
         try {
@@ -46,15 +45,13 @@ public class DistributedCacheService {
                     }
                     // still miss => hit db
                     logger.info("Cache miss for key: {}. Going to Database...", cacheKey);
-                    T dbData = dbQuery.get();
-
-                    // set cache
-                    if (dbData != null) {
+                    CacheResult<T> result = dbQuery.get();
+                    if (result != null && result.data() != null) {
                         redisTemplate.opsForValue()
-                                     .set(cacheKey, dbData, cacheTtlMinutes, TimeUnit.MINUTES);
+                                     .set(cacheKey, result.data(), result.ttl(), TimeUnit.MINUTES);
+                        return result.data();
                     }
-                    return dbData;
-
+                    return null;
                 } finally {
                     // always unlock
                     lock.unlock();
