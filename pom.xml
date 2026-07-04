@@ -15,6 +15,7 @@
         <module>shopflow-identity</module>
         <module>shopflow-inventory</module>
         <module>shopflow-notification</module>
+        <module>shopflow-gateway</module>
     </modules>
 
     <properties>
