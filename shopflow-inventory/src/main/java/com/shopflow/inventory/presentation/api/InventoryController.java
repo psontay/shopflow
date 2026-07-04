@@ -31,7 +31,7 @@ public class InventoryController {
     }
 
     @GetMapping("/{productId}/availability")
-    public ResponseEntity<ProductAvailabilityResponse> checkAvailability(@PathVariable UUID productId) {
+    public ResponseEntity<ProductAvailabilityResponse> checkAvailability(@PathVariable("productId") UUID productId) {
         CheckAvailabilityQuery query = new CheckAvailabilityQuery(productId);
         ProductAvailabilityResponse response = checkAvailabilityQueryHandler.handle(query);
         return ResponseEntity.ok(response);

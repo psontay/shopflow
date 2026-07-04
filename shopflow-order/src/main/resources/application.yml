@@ -11,10 +11,10 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
   kafka:
     bootstrap-servers: localhost:9092
     producer:
@@ -27,12 +27,26 @@ spring:
       auto-offset-reset: earliest
     listener:
       ack-mode: manual
-  resilience4j.circuitbreaker:
-    instances:
-      paymentService:
-        slidingWindowSize: 10
-        failureRateThreshold: 50
-        waitDurationInOpenState: 10s
+  resilience4j:
+    circuitbreaker:
+      instances:
+        inventoryService:
+          slidingWindowSize: 10
+          failureRateThreshold: 50
+          waitDurationInOpenState: 10s
+          permittedNumberOfCallsInHalfOpenState: 3
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 50
+          max-idle: 10
+          min-idle: 2
+
 server:
   port: 8081
 

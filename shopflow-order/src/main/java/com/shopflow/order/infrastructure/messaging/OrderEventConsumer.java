@@ -40,7 +40,7 @@ public class OrderEventConsumer {
                 if (orderIdStr != null && ! orderIdStr.isBlank()) {
                     UUID orderId = UUID.fromString(orderIdStr);
                     log.warn("Start to cancel Order ID {} cause run out of stock.", orderId);
-                    CancelOrderCommand command = new CancelOrderCommand(orderId);
+                    CancelOrderCommand command = new CancelOrderCommand(orderId, "Inventory out of stock");
                     cancelOrderCommandHandler.handle(command);
                     log.info("Cancel Order ID {} successfully", orderId);
                 } else {
