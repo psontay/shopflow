@@ -39,7 +39,9 @@ public class InventoryController {
 
     @PostMapping("/reserve")
     public ResponseEntity<Void> reserveStock(@Valid @RequestBody ReserveStockRequest request) {
-        ReserveStockCommand command = new ReserveStockCommand(request.productId(), request.quantity());
+        ReserveStockCommand command = new ReserveStockCommand(request.orderId(),
+                                                              request.productId(),
+                                                              request.quantity());
         reserveStockCommandHandler.handle(command);
         return ResponseEntity.ok()
                              .build();

@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 public record ReserveStockRequest(
+        @NotNull(message = "Order ID cannot be null")
+        UUID orderId,
         @NotNull(message = "Product ID cannot be null")
         UUID productId,
         @Min(value = 1,
