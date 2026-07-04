@@ -2,7 +2,6 @@ package com.shopflow.inventory.application.queries;
 
 import com.shopflow.inventory.domain.exceptions.InventoryDomainException;
 import com.shopflow.inventory.domain.exceptions.InventoryErrorCode;
-import com.shopflow.inventory.domain.models.Product;
 import com.shopflow.inventory.domain.repository.ProductRepository;
 import com.shopflow.shared.infrastructure.cache.DistributedCacheService;
 import org.slf4j.Logger;
@@ -28,15 +27,19 @@ public class CheckAvailabilityQueryHandler {
         log.debug("Checking stock quantity for Product ID: {}", query.productId());
         String cacheKey = "inventory-availability::" + query.productId();
         String lockKey = "lock:inventory-availability::" + query.productId();
-        return cacheService.getWithDoubleCheckLock(cacheKey, lockKey, () -> {
-            log.debug("Cache miss => Get product from database with ID: {}", query.productId());
-            Product product = productRepository.findById(query.productId())
-                                               .orElseThrow(() -> new InventoryDomainException(InventoryErrorCode.PRODUCT_NOT_FOUND));
-            return new ProductAvailabilityResponse(product.getId(),
-                                                   product.getName(),
-                                                   product.getAvailableQuantity(),
-                                                   product.getAvailableQuantity() > 0);
+        ProductAvailabilityResponse response = cacheService.getWithDoubleCheckLock(cacheKey, lockKey, () -> {
+            log.debug("Cache miss => Get fromd Database find product ID: {}", query.productId());
+            return productRepository.findById(query.productId())
+                                    .map(p -> new ProductAvailabilityResponse(p.getId(),
+                                                                              p.getName(),
+                                                                              p.getAvailableQuantity(),
+                                                                              p.getAvailableQuantity() > 0, false))
+                                    .orElseGet(() -> ProductAvailabilityResponse.notFound(query.productId()));
         }, 60);
+        if (response.isNotFound()) {
+            throw new InventoryDomainException(InventoryErrorCode.PRODUCT_NOT_FOUND);
+        }
+        return response;
     }
 
 }
