@@ -35,7 +35,7 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
     @Override
     public void deleteByUser(User user) {
         UserEntity userEntity = userPersistenceMapper.toEntity(user);
-        jpaRefreshTokenRepository.deleteByUser(userEntity);
+        jpaRefreshTokenRepository.deleteByUserEntity(userEntity);
     }
 
     @Override

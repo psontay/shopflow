@@ -1,7 +1,7 @@
 FROM maven:3.9.6-eclipse-temurin-21-alpine AS builder
 WORKDIR /build
 
-COPY pom.xml .
+COPY shopflow-identity/pom.xml .
 COPY shopflow-shared/pom.xml shopflow-shared/
 COPY shopflow-identity/pom.xml shopflow-identity/
 COPY shopflow-inventory/pom.xml shopflow-inventory/

@@ -14,6 +14,7 @@
         <module>shopflow-shared</module>
         <module>shopflow-identity</module>
         <module>shopflow-inventory</module>
+        <module>shopflow-notification</module>
     </modules>
 
     <properties>

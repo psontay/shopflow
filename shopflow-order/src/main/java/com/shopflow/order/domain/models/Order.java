@@ -77,7 +77,7 @@ public class Order extends BaseEntity {
             if (existingItem.getProductId()
                             .equals(newItem.getProductId())) {
                 existingItem.updateQuantity(existingItem.getQuantity() + newItem.getQuantity());
-                super.maskAsUpdated();
+                super.markAsUpdated();
                 return;
             }
         }
@@ -85,7 +85,7 @@ public class Order extends BaseEntity {
             throw new OrderDomainException(OrderErrorCode.INSUFFICIENT_STOCK);
         }
         this.orderItems.add(newItem);
-        super.maskAsUpdated();
+        super.markAsUpdated();
     }
 
     public void changeItemQuantity(UUID productId, int newQuantity) {
@@ -99,7 +99,7 @@ public class Order extends BaseEntity {
             if (existingItem.getProductId()
                             .equals(productId)) {
                 existingItem.updateQuantity(existingItem.getQuantity() + newQuantity);
-                super.maskAsUpdated();
+                super.markAsUpdated();
                 return;
             }
         }
@@ -113,7 +113,7 @@ public class Order extends BaseEntity {
         boolean removed = this.orderItems.removeIf(item -> item.getProductId()
                                                                .equals(productId));
         if (removed) {
-            super.maskAsUpdated();
+            super.markAsUpdated();
         }
     }
 
@@ -127,7 +127,7 @@ public class Order extends BaseEntity {
         this.paymentType = type;
         this.paymentStatus = PaymentStatus.SUCCESS;
         this.orderStatus = OrderStatus.PENDING_PAYMENT;
-        super.maskAsUpdated();
+        super.markAsUpdated();
     }
 
     public void submit() {
@@ -139,7 +139,7 @@ public class Order extends BaseEntity {
                           .map(item -> new OrderItemSnapshot(item.getProductId(), item.getQuantity()))
                           .toList();
         this.registerEvent(new OrderCreatedEvent(this.getId(), itemSnapshots));
-        super.maskAsUpdated();
+        super.markAsUpdated();
     }
 
     public void cancel(String reason) {
@@ -148,7 +148,7 @@ public class Order extends BaseEntity {
             throw new OrderDomainException(OrderErrorCode.INVALID_ORDER_STATE);
         }
         this.orderStatus = OrderStatus.CANCELED;
-        super.maskAsUpdated();
+        super.markAsUpdated();
         this.registerEvent(new OrderCancelledEvent(this.getId(), reason));
     }
 
@@ -164,7 +164,7 @@ public class Order extends BaseEntity {
             throw new IllegalArgumentException("Invalid multiplier discount");
         }
         this.discountMultiplier = multiplier;
-        super.maskAsUpdated();
+        super.markAsUpdated();
     }
 
     public long countWholesaleItems() {

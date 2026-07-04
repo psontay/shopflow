@@ -6,6 +6,8 @@ import com.shopflow.identity.application.commands.RefreshUserTokenCommand;
 import com.shopflow.identity.application.commands.RefreshUserTokenCommandHandler;
 import com.shopflow.identity.application.commands.RegisterUserCommand;
 import com.shopflow.identity.application.commands.RegisterUserCommandHandler;
+import com.shopflow.identity.application.commands.VerifyRegisterCommand;
+import com.shopflow.identity.application.commands.VerifyRegisterCommandHandler;
 import com.shopflow.identity.application.queries.AuthenticateResult;
 import com.shopflow.identity.application.security.TokenProviderPort;
 import com.shopflow.identity.application.token.RefreshTokenService;
@@ -34,16 +36,19 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
     private final TokenProviderPort tokenProviderPort;
     private final RefreshUserTokenCommandHandler refreshUserTokenCommandHandler;
+    private final VerifyRegisterCommandHandler verifyRegisterCommandHandler;
 
     public AuthController(RegisterUserCommandHandler registerUserCommandHandler,
                           AuthenticateUserCommandHandler authenticateUserQueryHandler,
                           RefreshTokenService refreshTokenService, TokenProviderPort tokenProviderPort,
-                          RefreshUserTokenCommandHandler refreshUserTokenCommandHandler) {
+                          RefreshUserTokenCommandHandler refreshUserTokenCommandHandler,
+                          VerifyRegisterCommandHandler verifyRegisterCommandHandler) {
         this.registerUserCommandHandler = registerUserCommandHandler;
         this.authenticateUserQueryHandler = authenticateUserQueryHandler;
         this.refreshTokenService = refreshTokenService;
         this.tokenProviderPort = tokenProviderPort;
         this.refreshUserTokenCommandHandler = refreshUserTokenCommandHandler;
+        this.verifyRegisterCommandHandler = verifyRegisterCommandHandler;
     }
 
     @PostMapping("/signup")
@@ -77,6 +82,13 @@ public class AuthController {
         String newAccessToken = refreshUserTokenCommandHandler.handle(command);
         LoginResponse response = new LoginResponse(newAccessToken, request.refreshToken(), "Bearer");
         return ResponseEntity.ok(ApiResponse.success(response, "Token refreshed successfully"));
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<Void> verifyOtp(@RequestBody VerifyRegisterCommand command) {
+        verifyRegisterCommandHandler.handle(command);
+        return ResponseEntity.ok()
+                             .build();
     }
 
 }

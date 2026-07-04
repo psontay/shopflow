@@ -49,4 +49,10 @@ public class UserRepositoryImpl implements UserRepository {
                                 .map(mapper :: toDomain);
     }
 
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return jpaUserRepository.findByEmail(email)
+                                .map(mapper :: toDomain);
+    }
+
 }

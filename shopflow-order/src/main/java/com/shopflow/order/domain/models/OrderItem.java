@@ -8,8 +8,8 @@ import java.util.UUID;
 public class OrderItem extends BaseEntity {
 
     private final UUID productId;
-    private int quantity;
     private final Money unitPrice;
+    private int quantity;
 
     public OrderItem(UUID id, UUID productId, int quantity, Money unitPrice) {
         super(id);
@@ -32,14 +32,6 @@ public class OrderItem extends BaseEntity {
                                       .multiply(java.math.BigDecimal.valueOf(quantity)));
     }
 
-    void updateQuantity(int newQuantity) {
-        if (newQuantity <= 0) {
-            throw new IllegalArgumentException("Quantity cannot be negative");
-        }
-        this.quantity = newQuantity;
-        this.maskAsUpdated();
-    }
-
     public UUID getProductId() {
         return productId;
     }
@@ -50,6 +42,14 @@ public class OrderItem extends BaseEntity {
 
     public Money getUnitPrice() {
         return unitPrice;
+    }
+
+    void updateQuantity(int newQuantity) {
+        if (newQuantity <= 0) {
+            throw new IllegalArgumentException("Quantity cannot be negative");
+        }
+        this.quantity = newQuantity;
+        this.markAsUpdated();
     }
 
 }

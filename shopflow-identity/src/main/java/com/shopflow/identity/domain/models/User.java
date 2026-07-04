@@ -69,7 +69,7 @@ public class User extends BaseEntity {
         }
         this.hashedPassword = newHashedPassword;
         this.registerEvent(new PasswordChangedEvent(this.getId()));
-        super.maskAsUpdated();
+        super.markAsUpdated();
     }
 
     public void lock() {
@@ -77,7 +77,7 @@ public class User extends BaseEntity {
             throw new UserDomainException(UserErrorCode.INVALID_USER_STATE);
         }
         this.userStatus = UserStatus.INACTIVE;
-        super.maskAsUpdated();
+        super.markAsUpdated();
     }
 
     public void unlock() {
@@ -85,12 +85,12 @@ public class User extends BaseEntity {
             throw new UserDomainException(UserErrorCode.INVALID_USER_STATE);
         }
         this.userStatus = UserStatus.ACTIVE;
-        super.maskAsUpdated();
+        super.markAsUpdated();
     }
 
     public void softDelete() {
         this.deleted = true;
-        super.maskAsUpdated();
+        super.markAsUpdated();
     }
 
     public void verify() {
@@ -98,7 +98,7 @@ public class User extends BaseEntity {
             throw new IdentityDomainException(IdentityErrorCode.INVALID_USER_STATE);
         }
         this.userStatus = UserStatus.ACTIVE;
-        super.maskAsUpdated();
+        super.markAsUpdated();
     }
 
     public boolean isDeleted() {

@@ -47,7 +47,7 @@ public class Product extends BaseEntity {
 
         this.availableQuantity -= quantity;
         this.reservedQuantity += quantity;
-        super.maskAsUpdated();
+        super.markAsUpdated();
     }
 
     // release when user cancel order
@@ -57,7 +57,7 @@ public class Product extends BaseEntity {
         }
         this.availableQuantity += quantity;
         this.reservedQuantity -= quantity;
-        super.maskAsUpdated();
+        super.markAsUpdated();
     }
 
     // commit stock when order status == success
@@ -66,7 +66,7 @@ public class Product extends BaseEntity {
             throw new InventoryDomainException(InventoryErrorCode.INSUFFICIENT_STOCK);
         }
         this.reservedQuantity -= quantity;
-        super.maskAsUpdated();
+        super.markAsUpdated();
     }
 
     public String getName() {

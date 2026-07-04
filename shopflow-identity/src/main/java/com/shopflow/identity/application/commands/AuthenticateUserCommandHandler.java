@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional()
 public class AuthenticateUserCommandHandler {
 
     private final UserRepository userRepository;
@@ -31,6 +30,7 @@ public class AuthenticateUserCommandHandler {
         this.refreshTokenService = refreshTokenService;
     }
 
+    @Transactional
     public AuthenticateResult handle(AuthenticateUserCommand query) {
         User user = userRepository.findByUsername(query.username())
                                   .orElseThrow(() -> new UserDomainException(

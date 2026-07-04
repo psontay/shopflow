@@ -20,10 +20,10 @@ public class RegisterUserCommandHandler {
     private final PasswordEncoder passwordEncoder;
     private final OutboxService outboxService;
 
-    private final RedisTemplate<Object, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     public RegisterUserCommandHandler(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                                      OutboxService outboxService, RedisTemplate<Object, Object> redisTemplate) {
+                                      OutboxService outboxService, RedisTemplate<String, Object> redisTemplate) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.outboxService = outboxService;
