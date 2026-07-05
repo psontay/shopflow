@@ -149,7 +149,11 @@ public class Order extends BaseEntity {
         }
         this.orderStatus = OrderStatus.CANCELED;
         super.markAsUpdated();
-        this.registerEvent(new OrderCancelledEvent(this.getId(), reason));
+        List<OrderItemSnapshot> itemSnapshots =
+                orderItems.stream()
+                          .map(item -> new OrderItemSnapshot(item.getProductId(), item.getQuantity()))
+                          .toList();
+        this.registerEvent(new OrderCancelledEvent(this.getId(), reason, itemSnapshots));
     }
 
     public Money getTotalAmount() {
