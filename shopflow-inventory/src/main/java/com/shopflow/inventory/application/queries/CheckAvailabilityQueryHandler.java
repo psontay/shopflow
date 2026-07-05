@@ -1,15 +1,14 @@
 package com.shopflow.inventory.application.queries;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.shopflow.inventory.domain.exceptions.InventoryDomainException;
-import com.shopflow.inventory.domain.exceptions.InventoryErrorCode;
+import com.shopflow.inventory.domain.models.Product;
 import com.shopflow.inventory.domain.repository.ProductRepository;
-import com.shopflow.shared.infrastructure.cache.CacheResult;
 import com.shopflow.shared.infrastructure.cache.DistributedCacheService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class CheckAvailabilityQueryHandler {
@@ -19,44 +18,33 @@ public class CheckAvailabilityQueryHandler {
 
     private final DistributedCacheService cacheService;
 
-    private final Cache<String, ProductAvailabilityResponse> localCache;
-
-    public CheckAvailabilityQueryHandler(ProductRepository productRepository, DistributedCacheService cacheService,
-                                         Cache<String, ProductAvailabilityResponse> localCache) {
+    public CheckAvailabilityQueryHandler(ProductRepository productRepository, DistributedCacheService cacheService) {
         this.productRepository = productRepository;
         this.cacheService = cacheService;
-        this.localCache = localCache;
     }
 
     @Transactional(readOnly = true)
-    public ProductAvailabilityResponse handle(CheckAvailabilityQuery query) {
-        String cacheKey = "inventory-availability::" + query.productId();
-        ProductAvailabilityResponse localRes = localCache.getIfPresent(cacheKey);
-        // l1 hit
-        if (localRes != null) {
-            if (localRes.isNotFound()) {
-                throw new InventoryDomainException(InventoryErrorCode.PRODUCT_NOT_FOUND);
+    public boolean handle(CheckAvailabilityQuery query) {
+        String cacheKey = "inventory-stock::" + query.productId();
+        Integer cachedQuantity = cacheService.get(cacheKey, Integer.class);
+        if (cachedQuantity != null) {
+            if (cachedQuantity == - 1) {
+                return false;
             }
-            return localRes;
+
+            return cachedQuantity >= query.quantity();
         }
-        // l1 miss => l2
-        String lockKey = "lock:inventory-availability::" + query.productId();
-        ProductAvailabilityResponse response = cacheService.getWithDoubleCheckLock(cacheKey, lockKey, () -> {
-            log.info("Database query for: {}", query.productId());
-            return productRepository.findById(query.productId())
-                                    .map(p -> CacheResult.ofRealData(new ProductAvailabilityResponse(p.getId(),
-                                                                                                     p.getName(),
-                                                                                                     p.getAvailableQuantity(),
-                                                                                                     p.getAvailableQuantity() > 0,
-                                                                                                     false), 60L))
-                                    .orElseGet(() -> CacheResult.ofNullObject(ProductAvailabilityResponse.notFound(query.productId()),
-                                                                              1L));
-        });
-        localCache.put(cacheKey, response);
-        if (response.isNotFound()) {
-            throw new InventoryDomainException(InventoryErrorCode.PRODUCT_NOT_FOUND);
+        Product product = productRepository.findById(query.productId())
+                                           .orElse(null);
+
+        if (product == null) {
+            cacheService.set(cacheKey, - 1, 5, TimeUnit.MINUTES);
+            return false;
         }
-        return response;
+
+        cacheService.set(cacheKey, product.getAvailableQuantity(), 1, TimeUnit.HOURS);
+
+        return product.getAvailableQuantity() >= query.quantity();
     }
 
 }

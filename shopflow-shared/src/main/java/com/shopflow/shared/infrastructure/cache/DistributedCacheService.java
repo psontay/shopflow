@@ -77,4 +77,21 @@ public class DistributedCacheService {
         redisTemplate.convertAndSend("inventory-cache-invalidation", cacheKey);
     }
 
+    public <T> T get(String cacheKey, Class<T> clazz) {
+        Object cachedData = redisTemplate.opsForValue()
+                                         .get(cacheKey);
+        if (clazz.isInstance(cachedData)) {
+            return clazz.cast(cachedData);
+        }
+        if (cachedData instanceof Integer && clazz == Integer.class) {
+            return clazz.cast(cachedData);
+        }
+        return null;
+    }
+
+    public void set(String cacheKey, Object value, long timeout, TimeUnit unit) {
+        redisTemplate.opsForValue()
+                     .set(cacheKey, value, timeout, unit);
+    }
+
 }

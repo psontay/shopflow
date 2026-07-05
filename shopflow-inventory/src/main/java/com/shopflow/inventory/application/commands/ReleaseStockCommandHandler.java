@@ -33,7 +33,7 @@ public class ReleaseStockCommandHandler {
                                                    InventoryErrorCode.PRODUCT_NOT_FOUND));
         product.releaseStock(command.quantity());
         productRepository.save(product);
-        cacheService.evictCacheAndNotify("inventory-availability::" + command.productId());
+        cacheService.evictCacheAndNotify("inventory-stock::" + command.productId());
         log.info("Release Stock Successfully - Clear cache for ProductID: {}", command.productId());
     }
 
