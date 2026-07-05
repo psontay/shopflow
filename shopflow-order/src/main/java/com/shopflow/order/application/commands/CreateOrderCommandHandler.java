@@ -29,7 +29,7 @@ public class CreateOrderCommandHandler {
     public UUID handle(CreateOrderCommand command) {
         for (CreateOrderCommand.OrderItemCommand itemCmd : command.items()) {
             boolean isAvailable = stockCheckerService.checkStock(itemCmd.productId()
-                                                                        .toString());
+                                                                        .toString(), itemCmd.quantity());
             if (! isAvailable) {
                 throw new RuntimeException("Inventory System is unavailable or out of stock! Cancel order.");
             }

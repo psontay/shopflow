@@ -4,6 +4,7 @@ import com.shopflow.order.application.services.StockCheckerService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,11 +20,16 @@ public class HttpInventoryClient implements StockCheckerService {
 
     @CircuitBreaker(name = "inventoryService",
             fallbackMethod = "fallbackCheckStock")
-    public boolean checkStock(String productId) {
+    public boolean checkStock(String productId, int quantity) {
         logger.info("Calling Inventory Service Port 8083 to checking");
-        String url = "http://localhost:8083/api/v1/inventory/" + productId + "/availability";
-        restTemplate.getForEntity(url, Object.class);
-        return true;
+        String url = "http://localhost:8083/api/v1/inventory/" + productId + "/availability?quantity=" + quantity;
+        try {
+            ResponseEntity<Boolean> response = restTemplate.getForEntity(url, Boolean.class);
+            return Boolean.TRUE.equals(response.getBody());
+        } catch (Exception e) {
+            // still return true cause kafka check inventory later and solving task
+            return true;
+        }
     }
 
     public boolean fallbackCheckStock(String productId, Throwable throwable) {
