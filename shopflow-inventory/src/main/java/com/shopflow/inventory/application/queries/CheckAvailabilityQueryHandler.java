@@ -34,7 +34,6 @@ public class CheckAvailabilityQueryHandler {
         ProductAvailabilityResponse localRes = localCache.getIfPresent(cacheKey);
         // l1 hit
         if (localRes != null) {
-            log.info("L1 CACHE HIT: {}", query.productId());
             if (localRes.isNotFound()) {
                 throw new InventoryDomainException(InventoryErrorCode.PRODUCT_NOT_FOUND);
             }
@@ -43,7 +42,7 @@ public class CheckAvailabilityQueryHandler {
         // l1 miss => l2
         String lockKey = "lock:inventory-availability::" + query.productId();
         ProductAvailabilityResponse response = cacheService.getWithDoubleCheckLock(cacheKey, lockKey, () -> {
-            log.debug("L2 MISS => Get from Database find product ID: {}", query.productId());
+            log.info("Database connection for: {} 🚨 🚨", query.productId());
             return productRepository.findById(query.productId())
                                     .map(p -> CacheResult.ofRealData(new ProductAvailabilityResponse(p.getId(),
                                                                                                      p.getName(),

@@ -25,3 +25,15 @@ spring:
           uri: http://localhost:8083
           predicates:
             - Path=/api/v1/inventory/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name}
