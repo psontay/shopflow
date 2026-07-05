@@ -27,14 +27,14 @@ spring:
       auto-offset-reset: earliest
     listener:
       ack-mode: manual
-  resilience4j:
-    circuitbreaker:
-      instances:
-        inventoryService:
-          slidingWindowSize: 10
-          failureRateThreshold: 50
-          waitDurationInOpenState: 10s
-          permittedNumberOfCallsInHalfOpenState: 3
+resilience4j:
+  circuitbreaker:
+    instances:
+      inventoryService:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
   data:
     redis:
       host: ${REDIS_HOST:localhost}
