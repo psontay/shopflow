@@ -19,4 +19,18 @@ public class CacheConfig {
                        .build();
     }
 
+    @Bean
+    public org.springframework.data.redis.listener.RedisMessageListenerContainer redisContainer(
+            org.springframework.data.redis.connection.RedisConnectionFactory connectionFactory,
+            Cache<String, ProductAvailabilityResponse> localCache) {
+        org.springframework.data.redis.listener.RedisMessageListenerContainer container = new org.springframework.data.redis.listener.RedisMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory);
+        container.addMessageListener((message, pattern) -> {
+            String cacheKey = new String(message.getBody()).replace("\"", "");
+            System.out.println("Redis Listener - Delete L1 Cache for key: " + cacheKey);
+            localCache.invalidate(cacheKey);
+        }, new org.springframework.data.redis.listener.ChannelTopic("inventory-cache-invalidation"));
+        return container;
+    }
+
 }

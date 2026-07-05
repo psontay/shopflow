@@ -100,6 +100,14 @@ services:
     networks:
       - shopflow-network
 
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: shopflow_zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - shopflow-network
+
 volumes:
   order-db-data:
   user-db-data:

@@ -72,4 +72,9 @@ public class DistributedCacheService {
         }
     }
 
+    public void evictCacheAndNotify(String cacheKey) {
+        redisTemplate.delete(cacheKey);
+        redisTemplate.convertAndSend("inventory-cache-invalidation", cacheKey);
+    }
+
 }

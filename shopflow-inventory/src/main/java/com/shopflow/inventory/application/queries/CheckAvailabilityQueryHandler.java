@@ -42,7 +42,7 @@ public class CheckAvailabilityQueryHandler {
         // l1 miss => l2
         String lockKey = "lock:inventory-availability::" + query.productId();
         ProductAvailabilityResponse response = cacheService.getWithDoubleCheckLock(cacheKey, lockKey, () -> {
-            log.info("Database connection for: {} 🚨 🚨", query.productId());
+            log.info("Database query for: {}", query.productId());
             return productRepository.findById(query.productId())
                                     .map(p -> CacheResult.ofRealData(new ProductAvailabilityResponse(p.getId(),
                                                                                                      p.getName(),

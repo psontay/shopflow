@@ -8,7 +8,6 @@ import com.shopflow.inventory.domain.models.Product;
 import com.shopflow.inventory.domain.repository.ProductRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,14 +20,16 @@ public class ReserveStockCommandHandler {
 
     private final OutboxRepository outboxRepository;
 
-    public ReserveStockCommandHandler(ProductRepository productRepository, OutboxRepository outboxRepository) {
+    private final com.shopflow.shared.infrastructure.cache.DistributedCacheService cacheService;
+
+    public ReserveStockCommandHandler(ProductRepository productRepository, OutboxRepository outboxRepository,
+                                      com.shopflow.shared.infrastructure.cache.DistributedCacheService cacheService) {
         this.productRepository = productRepository;
         this.outboxRepository = outboxRepository;
+        this.cacheService = cacheService;
     }
 
     @Transactional
-    @CacheEvict(value = "inventory-availability",
-            key = "#p0.productId()")
     public void handle(ReserveStockCommand command) {
         log.info("Reserve stock processing. OrderId: {}, ProductID: {}, Quantity: {}",
                  command.orderId(),
@@ -42,14 +43,15 @@ public class ReserveStockCommandHandler {
                                                });
             product.reserveStock(command.quantity());
             productRepository.save(product);
+            cacheService.evictCacheAndNotify("inventory-availability::" + command.productId());
             log.info("Reserve stock successfully. ProductID: {}", command.productId());
 
         } catch (InventoryDomainException e) {
             log.warn("Saga Compensating: Out of stock, cancel for OrderID: {}", command.orderId());
-            StockReservationFailedEvent failedEvent = new StockReservationFailedEvent(command.orderId(), e.getMessage());
+            StockReservationFailedEvent failedEvent = new StockReservationFailedEvent(command.orderId(),
+                                                                                      e.getMessage());
             outboxRepository.saveEvents(java.util.List.of(failedEvent));
         }
-
     }
 
 }
