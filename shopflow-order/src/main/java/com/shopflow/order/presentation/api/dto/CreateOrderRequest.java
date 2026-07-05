@@ -2,6 +2,8 @@ package com.shopflow.order.presentation.api.dto;
 
 import com.shopflow.order.application.commands.CreateOrderCommand;
 import com.shopflow.shared.domain.Money;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -17,19 +19,10 @@ public record CreateOrderRequest(
         @NotBlank(message = "Shipping address cannot be empty")
         String shippingAddress,
         @NotEmpty(message = "Cart must be at least 1 item")
+        @Valid
         List<OrderItemRequest> items
 
 ) {
-
-    public record OrderItemRequest(
-            @NotNull UUID productId, String productName, int quantity, MoneyRequest unitPrice
-    ) {
-
-    }
-
-    public record MoneyRequest(@NotNull BigDecimal amount, @NotBlank String currency) {
-
-    }
 
     public CreateOrderCommand toCommand() {
         List<CreateOrderCommand.OrderItemCommand> itemCommands = items.stream()
@@ -42,6 +35,23 @@ public record CreateOrderRequest(
                                                                       ))
                                                                       .collect(Collectors.toList());
         return new CreateOrderCommand(customerId, shippingAddress, itemCommands);
+    }
+
+    public record OrderItemRequest(
+            @NotNull UUID productId,
+            @NotBlank String productName,
+            @Min(value = 1,
+                    message = "Quantity must be at least 1") int quantity,
+            @NotNull @Valid MoneyRequest unitPrice
+    ) {
+
+    }
+
+    public record MoneyRequest(@NotNull(message = "Amount cannot be null")
+                               @Min(value = 0,
+                                       message = "Amount must be positive") BigDecimal amount,
+                               @NotBlank(message = "Currency is required") String currency) {
+
     }
 
 }

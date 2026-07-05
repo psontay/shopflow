@@ -12,7 +12,6 @@ public enum OrderErrorCode implements ErrorCode {
     INVALID_ORDER_STATE("ORD-003", "Order's status invalid to do this", HttpStatus.BAD_REQUEST),
 
     INSUFFICIENT_STOCK("ORD-004", "Stock not enough", HttpStatus.BAD_REQUEST);
-
     private final String code;
     private final String message;
     private final HttpStatus httpStatus;
