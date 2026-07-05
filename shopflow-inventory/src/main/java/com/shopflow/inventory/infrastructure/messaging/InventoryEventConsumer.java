@@ -3,6 +3,7 @@ package com.shopflow.inventory.infrastructure.messaging;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shopflow.inventory.application.commands.ReleaseStockCommandHandler;
 import com.shopflow.inventory.application.commands.ReserveStockCommand;
 import com.shopflow.inventory.application.commands.ReserveStockCommandHandler;
 import com.shopflow.inventory.infrastructure.persistence.JpaProcessedEventRepository;
@@ -24,12 +25,16 @@ public class InventoryEventConsumer {
     private static final Logger log = LoggerFactory.getLogger(InventoryEventConsumer.class);
 
     private final ReserveStockCommandHandler reserveStockCommandHandler;
+    private final ReleaseStockCommandHandler releaseStockCommandHandler;
     private final ObjectMapper objectMapper;
     private final JpaProcessedEventRepository processedEventRepository;
 
-    public InventoryEventConsumer(ReserveStockCommandHandler reserveStockCommandHandler, ObjectMapper objectMapper,
+    public InventoryEventConsumer(ReserveStockCommandHandler reserveStockCommandHandler,
+                                  ReleaseStockCommandHandler releaseStockCommandHandler,
+                                  ObjectMapper objectMapper,
                                   JpaProcessedEventRepository processedEventRepository) {
         this.reserveStockCommandHandler = reserveStockCommandHandler;
+        this.releaseStockCommandHandler = releaseStockCommandHandler;
         this.objectMapper = objectMapper;
         this.processedEventRepository = processedEventRepository;
     }
