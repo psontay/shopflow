@@ -5,11 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shopflow.inventory.application.commands.ReleaseStockCommand;
 import com.shopflow.inventory.application.commands.ReleaseStockCommandHandler;
 import com.shopflow.inventory.infrastructure.persistence.JpaProcessedEventRepository;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-@Service
+@Component
 public class OrderCancelledEventHandler extends AbstractIdempotentEventHandler {
 
     private final ReleaseStockCommandHandler releaseStockCommandHandler;
