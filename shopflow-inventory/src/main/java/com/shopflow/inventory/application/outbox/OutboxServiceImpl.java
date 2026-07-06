@@ -1,7 +1,5 @@
-package com.shopflow.inventory.infrastructure.persistence.impl;
+package com.shopflow.inventory.application.outbox;
 
-import com.shopflow.inventory.application.outbox.OutboxRepository;
-import com.shopflow.inventory.application.outbox.OutboxService;
 import com.shopflow.shared.domain.DomainEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
