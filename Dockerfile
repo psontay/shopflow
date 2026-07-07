@@ -14,7 +14,7 @@ WORKDIR /app
 
 ARG SERVICE_NAME
 
-RUN addgroup -S spring && adduser -S -G spring
+RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
 
 COPY --from=builder /build/${SERVICE_NAME}/target/*.jar app.jar

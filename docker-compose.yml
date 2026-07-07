@@ -119,11 +119,15 @@ services:
     container_name: shopflow-order
     ports:
       - "8081:8081"
+    env_file:
+      - .env
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://shopflow_order_db:5432/${POSTGRES_ORDER_DB}
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=shopflow_kafka:9092
       - SPRING_DATA_REDIS_HOST=shopflow_redis
+      - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD}
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://shopflow_zipkin:9411/api/v2/spans
+      - JAVA_TOOL_OPTIONS=-Xmx300m -Xms300m
     depends_on:
       - order-db
       - kafka
@@ -138,11 +142,15 @@ services:
     container_name: shopflow-identity
     ports:
       - "8082:8082"
+    env_file:
+      - .env
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://shopflow_identity_db:5432/${POSTGRES_IDENTITY_DB}
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=shopflow_kafka:9092
       - SPRING_DATA_REDIS_HOST=shopflow_redis
+      - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD}
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://shopflow_zipkin:9411/api/v2/spans
+      - JAVA_TOOL_OPTIONS=-Xmx300m -Xms300m
     depends_on:
       - identity-db
       - kafka
@@ -157,11 +165,15 @@ services:
     container_name: shopflow-inventory
     ports:
       - "8083:8083"
+    env_file:
+      - .env
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://shopflow_iventory_db:5432/${POSTGRES_INVENTORY_DB}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://shopflow_inventory_db:5432/${POSTGRES_INVENTORY_DB}
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=shopflow_kafka:9092
       - SPRING_DATA_REDIS_HOST=shopflow_redis
+      - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD}
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://shopflow_zipkin:9411/api/v2/spans
+      - JAVA_TOOL_OPTIONS=-Xmx300m -Xms300m
     depends_on:
       - inventory-db
       - kafka
