@@ -1,4 +1,4 @@
-package com.shopflow.order.domain.models;
+package com.shopflow.payment.domain.models;
 
 public enum PaymentStatus {
     PENDING, SUCCESS, FAILED, REFUNDED

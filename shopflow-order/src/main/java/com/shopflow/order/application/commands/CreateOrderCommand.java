@@ -1,6 +1,6 @@
 package com.shopflow.order.application.commands;
 
-import com.shopflow.shared.domain.Money;
+import com.shopflow.shared.domain.models.Money;
 
 import java.util.List;
 import java.util.UUID;

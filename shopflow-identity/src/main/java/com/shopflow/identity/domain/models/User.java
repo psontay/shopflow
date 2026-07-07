@@ -6,7 +6,7 @@ import com.shopflow.identity.domain.exceptions.IdentityDomainException;
 import com.shopflow.identity.domain.exceptions.IdentityErrorCode;
 import com.shopflow.identity.domain.exceptions.UserDomainException;
 import com.shopflow.identity.domain.exceptions.UserErrorCode;
-import com.shopflow.shared.domain.BaseEntity;
+import com.shopflow.shared.domain.models.BaseEntity;
 
 import java.time.Instant;
 import java.util.UUID;

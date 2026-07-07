@@ -1,4 +1,6 @@
-package com.shopflow.shared.domain;
+package com.shopflow.shared.domain.models;
+
+import com.shopflow.shared.domain.DomainEvent;
 
 import java.time.Instant;
 import java.util.ArrayList;

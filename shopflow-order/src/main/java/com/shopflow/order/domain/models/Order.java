@@ -5,8 +5,8 @@ import com.shopflow.order.domain.events.OrderCreatedEvent;
 import com.shopflow.order.domain.events.OrderItemSnapshot;
 import com.shopflow.order.domain.exceptions.OrderDomainException;
 import com.shopflow.order.domain.exceptions.OrderErrorCode;
-import com.shopflow.shared.domain.BaseEntity;
-import com.shopflow.shared.domain.Money;
+import com.shopflow.shared.domain.models.BaseEntity;
+import com.shopflow.shared.domain.models.Money;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class Order extends BaseEntity {
     private UUID customerId;
     private OrderStatus orderStatus;
     private String shippingAddress;
-    private PaymentType paymentType;
+    private PaymentMethod paymentMethod;
     private PaymentStatus paymentStatus;
     private double discountMultiplier = 1.0;
 
@@ -38,24 +38,25 @@ public class Order extends BaseEntity {
         this.orderItems = new ArrayList<>();
     }
 
-    private Order(UUID id, UUID customerId, OrderStatus orderStatus, String shippingAddress, PaymentType paymentType,
+    private Order(UUID orderId, UUID customerId, OrderStatus orderStatus, String shippingAddress,
+                  PaymentMethod paymentMethod,
                   PaymentStatus paymentStatus, double discountMultiplier, Instant createdAt, Instant updatedAt) {
-        super(id, createdAt, updatedAt);
+        super(orderId, createdAt, updatedAt);
         this.customerId = customerId;
         this.orderStatus = orderStatus;
         this.shippingAddress = shippingAddress;
-        this.paymentType = paymentType;
+        this.paymentMethod = paymentMethod;
         this.paymentStatus = paymentStatus;
         this.discountMultiplier = discountMultiplier;
         this.orderItems = new ArrayList<>();
     }
 
     public static Order reconstruct(UUID id, UUID customerId, OrderStatus orderStatus,
-                                    String shippingAddress, PaymentType paymentType,
+                                    String shippingAddress, PaymentMethod paymentMethod,
                                     PaymentStatus paymentStatus, double discountMultiplier,
                                     Instant createdAt, Instant updatedAt) {
         return new Order(id, customerId, orderStatus, shippingAddress,
-                         paymentType, paymentStatus, discountMultiplier,
+                         paymentMethod, paymentStatus, discountMultiplier,
                          createdAt, updatedAt);
     }
 
@@ -117,14 +118,14 @@ public class Order extends BaseEntity {
         }
     }
 
-    public void markAsPaid(PaymentType type) {
+    public void markAsPaid(PaymentMethod type) {
         if (this.orderStatus == OrderStatus.CANCELED) {
             throw new OrderDomainException(OrderErrorCode.INVALID_ORDER_STATE);
         }
         if (this.paymentStatus == PaymentStatus.SUCCESS) {
             throw new OrderDomainException(OrderErrorCode.INVALID_ORDER_STATE);
         }
-        this.paymentType = type;
+        this.paymentMethod = type;
         this.paymentStatus = PaymentStatus.SUCCESS;
         this.orderStatus = OrderStatus.PENDING_PAYMENT;
         super.markAsUpdated();
@@ -193,8 +194,8 @@ public class Order extends BaseEntity {
         return shippingAddress;
     }
 
-    public PaymentType getPaymentType() {
-        return paymentType;
+    public PaymentMethod getPaymentType() {
+        return paymentMethod;
     }
 
     public PaymentStatus getPaymentStatus() {

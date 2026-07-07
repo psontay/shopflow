@@ -4,7 +4,7 @@ import com.shopflow.order.domain.models.Order;
 import com.shopflow.order.domain.models.OrderItem;
 import com.shopflow.order.infrastructure.persistence.entity.OrderEntity;
 import com.shopflow.order.infrastructure.persistence.entity.OrderItemEntity;
-import com.shopflow.shared.domain.Money;
+import com.shopflow.shared.domain.models.Money;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class OrderPersistenceMapper {
                           .customerId(order.getCustomerId())
                           .orderStatus(order.getOrderStatus())
                           .shippingAddress(order.getShippingAddress())
-                          .paymentType(order.getPaymentType())
+                          .paymentMethod(order.getPaymentType())
                           .paymentStatus(order.getPaymentStatus())
                           .discountMultiplier(order.getDiscountMultiplier())
                           .items(itemEntities)
@@ -42,9 +42,15 @@ public class OrderPersistenceMapper {
     }
 
     public Order toDomain(OrderEntity entity) {
-        Order order = Order.reconstruct(entity.getId(), entity.getCustomerId(), entity.getOrderStatus(),
-                                        entity.getShippingAddress(), entity.getPaymentType(), entity.getPaymentStatus(),
-                                        entity.getDiscountMultiplier(), entity.getCreatedAt(), entity.getUpdatedAt());
+        Order order = Order.reconstruct(entity.getId(),
+                                        entity.getCustomerId(),
+                                        entity.getOrderStatus(),
+                                        entity.getShippingAddress(),
+                                        entity.getPaymentMethod(),
+                                        entity.getPaymentStatus(),
+                                        entity.getDiscountMultiplier(),
+                                        entity.getCreatedAt(),
+                                        entity.getUpdatedAt());
         entity.getItems()
               .forEach(itemEntity -> {
                   OrderItem item = new OrderItem(

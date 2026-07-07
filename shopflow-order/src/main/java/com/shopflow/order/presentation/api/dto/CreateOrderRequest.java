@@ -1,7 +1,7 @@
 package com.shopflow.order.presentation.api.dto;
 
 import com.shopflow.order.application.commands.CreateOrderCommand;
-import com.shopflow.shared.domain.Money;
+import com.shopflow.shared.domain.models.Money;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

@@ -1,7 +1,7 @@
 package com.shopflow.order.domain.models;
 
-import com.shopflow.shared.domain.BaseEntity;
-import com.shopflow.shared.domain.Money;
+import com.shopflow.shared.domain.models.BaseEntity;
+import com.shopflow.shared.domain.models.Money;
 
 import java.util.UUID;
 

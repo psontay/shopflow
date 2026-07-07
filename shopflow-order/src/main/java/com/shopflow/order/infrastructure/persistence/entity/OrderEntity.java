@@ -1,8 +1,8 @@
 package com.shopflow.order.infrastructure.persistence.entity;
 
 import com.shopflow.order.domain.models.OrderStatus;
+import com.shopflow.order.domain.models.PaymentMethod;
 import com.shopflow.order.domain.models.PaymentStatus;
-import com.shopflow.order.domain.models.PaymentType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,7 +42,7 @@ public class OrderEntity {
     @Column(nullable = false)
     private String shippingAddress;
     @Enumerated(EnumType.STRING)
-    private PaymentType paymentType;
+    private PaymentMethod paymentMethod;
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
     @Column(nullable = false)

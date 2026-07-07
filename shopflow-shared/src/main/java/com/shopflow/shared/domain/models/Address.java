@@ -1,4 +1,4 @@
-package com.shopflow.shared.domain;
+package com.shopflow.shared.domain.models;
 
 public record Address(
         String street,

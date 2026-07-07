@@ -1,4 +1,4 @@
-package com.shopflow.shared.domain;
+package com.shopflow.shared.domain.models;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -39,13 +39,6 @@ public record Money(BigDecimal amount, Currency currency) {
         return new Money(amount.subtract(other.amount), this.currency);
     }
 
-    private void checkCurrencyPreconditions(Money other) {
-        Objects.requireNonNull(other, "Cannot operate with null Money");
-        if (! this.currency.equals(other.currency)) {
-            throw new IllegalArgumentException("Currency mismatch");
-        }
-    }
-
     public Money multiply(double multiplier) {
         BigDecimal factor = BigDecimal.valueOf(multiplier);
         BigDecimal newAmount = this.amount.multiply(factor);
@@ -60,6 +53,13 @@ public record Money(BigDecimal amount, Currency currency) {
         int scale = this.currency.getDefaultFractionDigits();
         BigDecimal newAmount = this.amount.divide(divisorBD, scale, RoundingMode.HALF_EVEN);
         return new Money(newAmount, this.currency);
+    }
+
+    private void checkCurrencyPreconditions(Money other) {
+        Objects.requireNonNull(other, "Cannot operate with null Money");
+        if (! this.currency.equals(other.currency)) {
+            throw new IllegalArgumentException("Currency mismatch");
+        }
     }
 
 }

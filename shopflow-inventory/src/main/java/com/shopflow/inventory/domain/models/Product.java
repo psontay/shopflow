@@ -2,7 +2,7 @@ package com.shopflow.inventory.domain.models;
 
 import com.shopflow.inventory.domain.exceptions.InventoryDomainException;
 import com.shopflow.inventory.domain.exceptions.InventoryErrorCode;
-import com.shopflow.shared.domain.BaseEntity;
+import com.shopflow.shared.domain.models.BaseEntity;
 
 import java.time.Instant;
 import java.util.UUID;
