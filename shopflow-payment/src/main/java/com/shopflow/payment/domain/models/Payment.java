@@ -77,4 +77,24 @@ public class Payment extends BaseEntity {
         this.addDomainEvent(new PaymentFailedEvent(this.getId(), this.orderId, failureReason));
     }
 
+    public UUID getOrderId() {
+        return orderId;
+    }
+
+    public Money getAmount() {
+        return amount;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public PaymentStatus getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public String getProviderTransactionId() {
+        return providerTransactionId;
+    }
+
 }
