@@ -1,5 +1,8 @@
 package com.shopflow.payment.domain.models;
 
+import com.shopflow.payment.domain.events.PaymentCompletedEvent;
+import com.shopflow.payment.domain.exceptions.PaymentDomainException;
+import com.shopflow.payment.domain.exceptions.PaymentErrorCode;
 import com.shopflow.shared.domain.models.BaseEntity;
 import com.shopflow.shared.domain.models.Money;
 
@@ -11,8 +14,8 @@ public class Payment extends BaseEntity {
     private final UUID orderId;
     private final Money amount;
     private final PaymentMethod paymentMethod;
-    private final PaymentStatus paymentStatus;
-    private final String providerTransactionId;
+    private PaymentStatus paymentStatus;
+    private String providerTransactionId;
 
     //Invariants Constructor
 
@@ -47,6 +50,18 @@ public class Payment extends BaseEntity {
                            createdAt,
                            updatedAt);
 
+    }
+
+    public void complete(String providerTransactionId) {
+        if (this.paymentStatus != PaymentStatus.PENDING) {
+            throw new PaymentDomainException(PaymentErrorCode.PAY_ERR_INVALID_STATUS);
+        }
+        if (providerTransactionId == null || providerTransactionId.isBlank()) {
+            throw new PaymentDomainException(PaymentErrorCode.PAY_ERR_INVALID_PROVIDER_TRANSACTION_ID);
+        }
+        this.paymentStatus = PaymentStatus.SUCCESS;
+        this.providerTransactionId = providerTransactionId;
+        this.registerEvent(new PaymentCompletedEvent(this.getId(), this.orderId, this.amount));
     }
 
 }
