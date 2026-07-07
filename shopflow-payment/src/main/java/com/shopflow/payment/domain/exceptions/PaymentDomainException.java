@@ -1,15 +1,13 @@
-package com.shopflow.order.domain.exceptions;
+package com.shopflow.payment.domain.exceptions;
 
 import com.shopflow.shared.domain.DomainException;
 import com.shopflow.shared.domain.ErrorCode;
 
-public class OrderDomainException extends DomainException {
-
+public class PaymentDomainException extends DomainException {
     private final ErrorCode errorCode;
-
-    public OrderDomainException(ErrorCode errorCode) {
+    public PaymentDomainException(ErrorCode errorCode) {
         super(errorCode);
-        this.errorCode = errorCode;
+        this.errorCode = errorCode
     }
 
     @Override
