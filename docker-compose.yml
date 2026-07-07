@@ -15,20 +15,20 @@ services:
       - order-db-data:/var/lib/postgresql/data
     networks:
       - shopflow-network
-  user-db:
+  identity-db:
     image: postgres:15-alpine
-    container_name: shopflow_user_db
+    container_name: shopflow_identity_db
     restart: always
     env_file:
       - .env
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_USER_DB}
+      POSTGRES_DB: ${POSTGRES_IDENTITY_DB}
     ports:
       - "5434:5432"
     volumes:
-      - user-db-data:/var/lib/postgresql/data
+      - identity-db-data:/var/lib/postgresql/data
     networks:
       - shopflow-network
   inventory-db:
@@ -80,6 +80,7 @@ services:
       - shopflow-network
   prometheus:
     image: prom/prometheus:latest
+    profiles: [ "monitor" ]
     container_name: shopflow_prometheus
     ports:
       - "9090:9090"
@@ -92,6 +93,7 @@ services:
 
   grafana:
     image: grafana/grafana:latest
+    profiles: [ "monitor" ]
     container_name: shopflow_grafana
     ports:
       - "3000:3000"
@@ -102,6 +104,7 @@ services:
 
   zipkin:
     image: openzipkin/zipkin:latest
+    profiles: [ "monitor" ]
     container_name: shopflow_zipkin
     ports:
       - "9411:9411"
@@ -115,8 +118,8 @@ services:
         SERVICE_NAME: shopflow-order
     container_name: shopflow-order
     ports:
-    environment:
       - "8081:8081"
+    environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://shopflow_order_db:5432/${POSTGRES_ORDER_DB}
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=shopflow_kafka:9092
       - SPRING_DATA_REDIS_HOST=shopflow_redis
@@ -127,10 +130,48 @@ services:
       - redis
     networks:
       - shopflow-network
+  shopflow-identity:
+    build:
+      context: .
+      args:
+        SERVICE_NAME: shopflow-identity
+    container_name: shopflow-identity
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://shopflow_identity_db:5432/${POSTGRES_IDENTITY_DB}
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=shopflow_kafka:9092
+      - SPRING_DATA_REDIS_HOST=shopflow_redis
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://shopflow_zipkin:9411/api/v2/spans
+    depends_on:
+      - identity-db
+      - kafka
+      - redis
+    networks:
+      - shopflow-network
+  shopflow-inventory:
+    build:
+      context: .
+      args:
+        SERVICE_NAME: shopflow-inventory
+    container_name: shopflow-inventory
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://shopflow_iventory_db:5432/${POSTGRES_INVENTORY_DB}
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=shopflow_kafka:9092
+      - SPRING_DATA_REDIS_HOST=shopflow_redis
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://shopflow_zipkin:9411/api/v2/spans
+    depends_on:
+      - inventory-db
+      - kafka
+      - redis
+    networks:
+      - shopflow-network
 
 volumes:
   order-db-data:
-  user-db-data:
+  identity-db-data:
   inventory-db-data:
 
 networks:
