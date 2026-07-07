@@ -51,11 +51,11 @@ public class Order extends BaseEntity {
         this.orderItems = new ArrayList<>();
     }
 
-    public static Order reconstruct(UUID id, UUID customerId, OrderStatus orderStatus,
+    public static Order reconstruct(UUID orderId, UUID customerId, OrderStatus orderStatus,
                                     String shippingAddress, PaymentMethod paymentMethod,
                                     PaymentStatus paymentStatus, double discountMultiplier,
                                     Instant createdAt, Instant updatedAt) {
-        return new Order(id, customerId, orderStatus, shippingAddress,
+        return new Order(orderId, customerId, orderStatus, shippingAddress,
                          paymentMethod, paymentStatus, discountMultiplier,
                          createdAt, updatedAt);
     }

@@ -35,4 +35,18 @@ public class Payment extends BaseEntity {
         this.providerTransactionId = providerTransactionId;
     }
 
+    public static Payment reconstruct(UUID paymentId, UUID orderId, Money amount, PaymentMethod paymentMethod,
+                                      PaymentStatus paymentStatus,
+                                      String providerTransactionId, Instant createdAt, Instant updatedAt) {
+        return new Payment(paymentId,
+                           orderId,
+                           amount,
+                           paymentMethod,
+                           paymentStatus,
+                           providerTransactionId,
+                           createdAt,
+                           updatedAt);
+
+    }
+
 }
