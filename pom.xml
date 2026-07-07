@@ -23,6 +23,7 @@
         <module>shopflow-inventory</module>
         <module>shopflow-notification</module>
         <module>shopflow-gateway</module>
+        <module>shopflow-payment</module>
     </modules>
 
     <properties>

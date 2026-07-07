@@ -3,7 +3,7 @@ package com.shopflow.identity.application.commands;
 import com.shopflow.identity.domain.exceptions.IdentityDomainException;
 import com.shopflow.identity.domain.exceptions.IdentityErrorCode;
 import com.shopflow.identity.domain.models.User;
-import com.shopflow.identity.domain.repository.UserRepository;
+import com.shopflow.identity.domain.repositories.UserRepository;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

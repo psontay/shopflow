@@ -1,4 +1,4 @@
-package com.shopflow.inventory.domain.repository;
+package com.shopflow.inventory.domain.repositories;
 
 import com.shopflow.inventory.domain.models.Product;
 

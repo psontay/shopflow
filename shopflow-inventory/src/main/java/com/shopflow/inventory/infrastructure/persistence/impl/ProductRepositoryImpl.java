@@ -1,7 +1,7 @@
 package com.shopflow.inventory.infrastructure.persistence.impl;
 
 import com.shopflow.inventory.domain.models.Product;
-import com.shopflow.inventory.domain.repository.ProductRepository;
+import com.shopflow.inventory.domain.repositories.ProductRepository;
 import com.shopflow.inventory.infrastructure.persistence.JpaProductRepository;
 import com.shopflow.inventory.infrastructure.persistence.entity.ProductEntity;
 import com.shopflow.inventory.infrastructure.persistence.mapper.ProductPersistenceMapper;

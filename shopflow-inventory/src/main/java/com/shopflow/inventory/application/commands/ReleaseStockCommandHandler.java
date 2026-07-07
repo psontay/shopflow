@@ -3,7 +3,7 @@ package com.shopflow.inventory.application.commands;
 import com.shopflow.inventory.domain.exceptions.InventoryDomainException;
 import com.shopflow.inventory.domain.exceptions.InventoryErrorCode;
 import com.shopflow.inventory.domain.models.Product;
-import com.shopflow.inventory.domain.repository.ProductRepository;
+import com.shopflow.inventory.domain.repositories.ProductRepository;
 import com.shopflow.shared.infrastructure.cache.DistributedCacheService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

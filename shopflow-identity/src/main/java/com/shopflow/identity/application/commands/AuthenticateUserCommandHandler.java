@@ -8,7 +8,7 @@ import com.shopflow.identity.domain.exceptions.UserErrorCode;
 import com.shopflow.identity.domain.models.RefreshToken;
 import com.shopflow.identity.domain.models.User;
 import com.shopflow.identity.domain.models.UserStatus;
-import com.shopflow.identity.domain.repository.UserRepository;
+import com.shopflow.identity.domain.repositories.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

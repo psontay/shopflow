@@ -2,13 +2,14 @@ package com.shopflow.identity.infrastructure.persistence.impl;
 
 import com.shopflow.identity.domain.models.RefreshToken;
 import com.shopflow.identity.domain.models.User;
-import com.shopflow.identity.domain.repository.RefreshTokenRepository;
+import com.shopflow.identity.domain.repositories.RefreshTokenRepository;
 import com.shopflow.identity.infrastructure.persistence.JpaRefreshTokenRepository;
 import com.shopflow.identity.infrastructure.persistence.entity.UserEntity;
 import com.shopflow.identity.infrastructure.persistence.mapper.RefreshTokenPersistenceMapper;
 import com.shopflow.identity.infrastructure.persistence.mapper.UserPersistenceMapper;
 
 import org.springframework.stereotype.Repository;
+
 import java.util.Optional;
 
 @Repository
