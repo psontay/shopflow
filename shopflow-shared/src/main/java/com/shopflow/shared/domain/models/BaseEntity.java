@@ -58,7 +58,7 @@ public abstract class BaseEntity {
         this.updatedAt = Instant.now();
     }
 
-    protected void registerEvent(DomainEvent event) {
+    protected void addDomainEvent(DomainEvent event) {
         if (this.domainEvents == null) {
             this.domainEvents = new ArrayList<>();
         }

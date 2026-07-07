@@ -37,7 +37,7 @@ public class User extends BaseEntity {
         this.userStatus = UserStatus.PENDING_VERIFICATION;
         this.deleted = false;
         this.role = Role.USER;
-        this.registerEvent(new UserRegisterEvent(userId, email));
+        this.addDomainEvent(new UserRegisterEvent(userId, email));
     }
 
     private User(UUID userId, String username, UserStatus userStatus, Role role, boolean deleted, String email,
@@ -68,7 +68,7 @@ public class User extends BaseEntity {
             throw new IllegalArgumentException("New password cannot be blank.");
         }
         this.hashedPassword = newHashedPassword;
-        this.registerEvent(new PasswordChangedEvent(this.getId()));
+        this.addDomainEvent(new PasswordChangedEvent(this.getId()));
         super.markAsUpdated();
     }
 

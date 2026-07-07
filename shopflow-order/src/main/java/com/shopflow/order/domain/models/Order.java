@@ -139,7 +139,7 @@ public class Order extends BaseEntity {
                 orderItems.stream()
                           .map(item -> new OrderItemSnapshot(item.getProductId(), item.getQuantity()))
                           .toList();
-        this.registerEvent(new OrderCreatedEvent(this.getId(), itemSnapshots));
+        this.addDomainEvent(new OrderCreatedEvent(this.getId(), itemSnapshots));
         super.markAsUpdated();
     }
 
@@ -154,7 +154,7 @@ public class Order extends BaseEntity {
                 orderItems.stream()
                           .map(item -> new OrderItemSnapshot(item.getProductId(), item.getQuantity()))
                           .toList();
-        this.registerEvent(new OrderCancelledEvent(this.getId(), reason, itemSnapshots));
+        this.addDomainEvent(new OrderCancelledEvent(this.getId(), reason, itemSnapshots));
     }
 
     public Money getTotalAmount() {
