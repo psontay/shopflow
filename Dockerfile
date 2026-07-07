@@ -1,25 +1,22 @@
+#build stage
 FROM maven:3.9.6-eclipse-temurin-21-alpine AS builder
 WORKDIR /build
 
-COPY shopflow-identity/pom.xml .
-COPY shopflow-shared/pom.xml shopflow-shared/
-COPY shopflow-identity/pom.xml shopflow-identity/
-COPY shopflow-inventory/pom.xml shopflow-inventory/
-COPY shopflow-order/pom.xml shopflow-order/
+ARG SERVICE_NAME
 
-COPY shopflow-shared/src shopflow-shared/src
-COPY shopflow-identity/src shopflow-identity/src
+COPY . .
 
-RUN mvn clean package -pl shopflow-identity -am -DskipTests
+RUN mvn clean package -pl ${SERVICE_NAME} -am -DskipTest
 
+#run stage
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-RUN addgroup -S spring && adduser -S spring -G spring
+ARG SERVICE_NAME
+
+RUN addgroup -S spring && adduser -S -G spring
 USER spring:spring
 
-COPY --from=builder /build/shopflow-identity/target/*.jar app.jar
-
-EXPOSE 8081
+COPY --from=builder /build/${SERVICE_NAME}/target/*.jar app.jar
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

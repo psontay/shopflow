@@ -108,6 +108,26 @@ services:
     networks:
       - shopflow-network
 
+  shopflow-order:
+    build:
+      context: .
+      args:
+        SERVICE_NAME: shopflow-order
+    container_name: shopflow-order
+    ports:
+    environment:
+      - "8081:8081"
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://shopflow_order_db:5432/${POSTGRES_ORDER_DB}
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=shopflow_kafka:9092
+      - SPRING_DATA_REDIS_HOST=shopflow_redis
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://shopflow_zipkin:9411/api/v2/spans
+    depends_on:
+      - order-db
+      - kafka
+      - redis
+    networks:
+      - shopflow-network
+
 volumes:
   order-db-data:
   user-db-data:
