@@ -38,7 +38,6 @@ public class PaymentEntity {
     private PaymentMethod paymentMethod;
     @Column(nullable = false)
     private BigDecimal amount;
-    @Column(nullable = false)
     private String providerTransactionId;
 
 }
