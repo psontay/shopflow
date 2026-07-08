@@ -36,7 +36,7 @@ public class CreatePaymentLinkCommandHandler {
         PaymentMethod method = PaymentMethod.valueOf(command.paymentMethod()
                                                             .toUpperCase());
         Money money = Money.of(command.amount());
-        transactionTemplate.execute(status -> {
+        return transactionTemplate.execute(status -> {
             UUID newPaymentId = UUID.randomUUID();
             Payment payment = new Payment(newPaymentId, command.orderId(), money, method);
             PaymentGatewayPort selectedGateway =
@@ -52,7 +52,6 @@ public class CreatePaymentLinkCommandHandler {
             log.info("Tạo link thanh toán thành công: {}", payUrl);
             return payUrl;
         });
-        return null;
     }
 
 }

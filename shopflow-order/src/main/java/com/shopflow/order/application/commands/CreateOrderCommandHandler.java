@@ -34,7 +34,7 @@ public class CreateOrderCommandHandler {
                 throw new RuntimeException("Inventory System is unavailable or out of stock! Cancel order.");
             }
         }
-        transactionTemplate.execute(status -> {
+        return transactionTemplate.execute(status -> {
             UUID newOrderId = UUID.randomUUID();
             Order newOrder = new Order(
                     newOrderId, command.customerId(), command.shippingAddress()
@@ -51,7 +51,6 @@ public class CreateOrderCommandHandler {
             outboxService.saveEvents(newOrder.getDomainEvents());
             return newOrder.getId();
         });
-        return null;
     }
 
 }
