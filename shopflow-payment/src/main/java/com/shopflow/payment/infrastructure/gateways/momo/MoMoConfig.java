@@ -1,0 +1,19 @@
+package com.shopflow.payment.infrastructure.gateways.momo;
+
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
+@Data
+@Configuration
+@ConfigurationProperties(prefix = "momo.payment")
+public class MoMoConfig {
+
+    private String partnerCode;
+    private String accessKey;
+    private String secretKey;
+    private String apiEndpoint;
+    private String returnUrl;
+    private String ipnUrl;
+
+}

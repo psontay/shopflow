@@ -38,7 +38,8 @@ public enum PaymentErrorCode implements ErrorCode {
                               "Invalid digital signature or checksum from gateway webhook",
                               HttpStatus.UNAUTHORIZED),
     PAY_ERR_INVALID_STATUS("PAY-016", "Invalid payment status", HttpStatus.BAD_REQUEST),
-    PAY_ERR_INVALID_PROVIDER_TRANSACTION_ID("PAY-017", "Invalid provider transaction id", HttpStatus.BAD_REQUEST);
+    PAY_ERR_INVALID_PROVIDER_TRANSACTION_ID("PAY-017", "Invalid provider transaction id", HttpStatus.BAD_REQUEST),
+    PAY_ERR_INVALID_METHOD("PAY-018", "Invalid payment method", HttpStatus.BAD_REQUEST);
 
     private final String code;
     private final String message;

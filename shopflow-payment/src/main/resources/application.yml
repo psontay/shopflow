@@ -48,6 +48,15 @@ resilience4j:
           max-idle: 10
           min-idle: 2
 
+momo:
+  payment:
+    partner-code: "MOMO..."
+    access-key: "..."
+    secret-key: "..."
+    api-endpoint: "https://test-payment.momo.vn/v2/gateway/api/create"
+    return-url: "http://localhost:3000/payment-result"
+    ipn-url: "https://abcd.ngrok-free.app/api/v1/payments/momo-ipn"
+
 logging:
   level:
     org.springframework.security: TRACE
