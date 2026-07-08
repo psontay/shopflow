@@ -17,7 +17,7 @@ public record PaymentCompletedEvent(
 ) implements DomainEvent {
 
     public PaymentCompletedEvent(UUID paymentId, UUID orderId, Money amount, String paymentMethod) {
-        this(UUID.randomUUID(), paymentId, orderId, amount, String paymentMethod,Instant.now(), "PaymentCompletedEvent");
+        this(UUID.randomUUID(), paymentId, orderId, amount, paymentMethod, Instant.now(), "PaymentCompletedEvent");
     }
 
     @Override
