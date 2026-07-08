@@ -1,6 +1,6 @@
 package com.shopflow.identity.application.commands;
 
-import com.shopflow.identity.application.outbox.OutboxService;
+import com.shopflow.identity.application.outbox.OutboxRepository;
 import com.shopflow.identity.application.services.OtpService;
 import com.shopflow.identity.domain.exceptions.UserDomainException;
 import com.shopflow.identity.domain.exceptions.UserErrorCode;
@@ -17,14 +17,14 @@ public class RegisterUserCommandHandler {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final OutboxService outboxService;
+    private final OutboxRepository outboxRepository;
     private final OtpService otpService;
 
     public RegisterUserCommandHandler(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                                      OutboxService outboxService, OtpService otpService) {
+                                      OutboxRepository outboxRepository, OtpService otpService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.outboxService = outboxService;
+        this.outboxRepository = outboxRepository;
         this.otpService = otpService;
     }
 
@@ -46,7 +46,7 @@ public class RegisterUserCommandHandler {
 
         User newUser = new User(newUserId, command.username(), command.email(), hashedPassword);
         userRepository.save(newUser);
-        outboxService.saveEvents(newUser.getDomainEvents());
+        outboxRepository.saveEvents(newUser.getDomainEvents());
         return newUser.getId();
     }
 

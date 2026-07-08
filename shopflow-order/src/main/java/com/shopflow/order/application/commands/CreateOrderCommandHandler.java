@@ -1,6 +1,6 @@
 package com.shopflow.order.application.commands;
 
-import com.shopflow.order.application.outbox.OutboxService;
+import com.shopflow.order.application.outbox.OutboxRepository;
 import com.shopflow.order.application.services.StockCheckerService;
 import com.shopflow.order.domain.models.Order;
 import com.shopflow.order.domain.models.OrderItem;
@@ -14,14 +14,14 @@ import java.util.UUID;
 public class CreateOrderCommandHandler {
 
     private final OrderRepository orderRepository;
-    private final OutboxService outboxService;
+    private final OutboxRepository outboxRepository;
     private final StockCheckerService stockCheckerService;
     private final TransactionTemplate transactionTemplate;
 
-    public CreateOrderCommandHandler(OrderRepository orderRepository, OutboxService outboxService,
+    public CreateOrderCommandHandler(OrderRepository orderRepository, OutboxRepository outboxRepository,
                                      StockCheckerService stockCheckerService, TransactionTemplate transactionTemplate) {
         this.orderRepository = orderRepository;
-        this.outboxService = outboxService;
+        this.outboxRepository = outboxRepository;
         this.stockCheckerService = stockCheckerService;
         this.transactionTemplate = transactionTemplate;
     }
@@ -48,7 +48,7 @@ public class CreateOrderCommandHandler {
             }
             newOrder.submit();
             orderRepository.save(newOrder);
-            outboxService.saveEvents(newOrder.getDomainEvents());
+            outboxRepository.saveEvents(newOrder.getDomainEvents());
             return newOrder.getId();
         });
     }

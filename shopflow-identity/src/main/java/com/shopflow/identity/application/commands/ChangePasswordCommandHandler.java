@@ -1,6 +1,6 @@
 package com.shopflow.identity.application.commands;
 
-import com.shopflow.identity.application.outbox.OutboxService;
+import com.shopflow.identity.application.outbox.OutboxRepository;
 import com.shopflow.identity.domain.exceptions.UserDomainException;
 import com.shopflow.identity.domain.exceptions.UserErrorCode;
 import com.shopflow.identity.domain.models.User;
@@ -14,13 +14,13 @@ public class ChangePasswordCommandHandler {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final OutboxService outboxService;
+    private final OutboxRepository outboxRepository;
 
     public ChangePasswordCommandHandler(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                                        OutboxService outboxService) {
+                                        OutboxRepository outboxRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.outboxService = outboxService;
+        this.outboxRepository = outboxRepository;
     }
 
     @Transactional
@@ -40,7 +40,7 @@ public class ChangePasswordCommandHandler {
 
         userRepository.save(user);
 
-        outboxService.saveEvents(user.getDomainEvents());
+        outboxRepository.saveEvents(user.getDomainEvents());
     }
 
 }
