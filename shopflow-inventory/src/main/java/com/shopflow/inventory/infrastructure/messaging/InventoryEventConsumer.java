@@ -28,7 +28,7 @@ public class InventoryEventConsumer {
     @KafkaListener(topics = "order-events",
             groupId = "inventory-service-group")
     public void consume(@Payload String messagePayload, Acknowledgment acknowledgment) {
-        log.info("RAW PAYLOAD received from Kafka");
+        log.info("RAW PAYLOAD received from Kafka: {}", messagePayload);
 
         try {
             JsonNode rootNode = objectMapper.readTree(messagePayload);
