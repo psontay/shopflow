@@ -6,7 +6,7 @@ ARG SERVICE_NAME
 
 COPY . .
 
-RUN mvn clean package -pl ${SERVICE_NAME} -am -DskipTest
+RUN mvn clean package -pl ${SERVICE_NAME} -am -DskipTests
 
 #run stage
 FROM eclipse-temurin:21-jre-alpine

@@ -21,9 +21,11 @@ ShopFlow is a highly scalable, event-driven e-commerce platform built with Sprin
 *   **Rate Limiting**: Protected endpoints (like Login) using `Resilience4j` (combining IP-based and User-based limiting) to prevent brute-force attacks.
 
 ### 3. Service Modules
+*   **shopflow-gateway**: Spring Cloud Gateway for centralized routing, rate limiting, and CORS configuration.
 *   **shopflow-shared**: Core domain abstractions, shared exceptions, and centralized configuration (e.g., Redis setup).
 *   **shopflow-order**: Manages order lifecycles and handles compensating actions from inventory failures.
 *   **shopflow-inventory**: Manages product catalog and stock reservations.
+*   **shopflow-payment**: Integrates with external payment gateways (MoMo V2). Uses Redisson Distributed Locks for idempotent IPN Webhook handling to prevent race conditions.
 *   **shopflow-notification**: Dedicated "dumb" consumer service that listens to Kafka events to dispatch HTML emails via Google SMTP.
 
 ## Tech Stack
@@ -39,10 +41,7 @@ ShopFlow is a highly scalable, event-driven e-commerce platform built with Sprin
 
 The following features are planned for upcoming phases:
 
-### Phase 1: Gateway & Routing
-*   **Spring Cloud Gateway (shopflow-gateway)**: Centralized routing, global CORS configuration, and unified JWT validation filter.
-
-### Phase 2: Distributed System Resilience
+### Phase 1: Distributed System Resilience
 *   **Circuit Breaker & Retry Patterns**: Implementing `Resilience4j` Circuit Breakers for any synchronous HTTP/gRPC calls between microservices to prevent cascading failures.
 *   **Advanced Caching**: Implementing Redis Cache-Aside pattern for high-traffic endpoints (e.g., product catalogs) with Cache Eviction policies.
 
@@ -64,4 +63,25 @@ The following features are planned for upcoming phases:
 
 ## Getting Started
 
-(Instructions for local setup via Docker Compose will be added once the containerization phase is complete).
+### Prerequisites
+* Docker and Docker Compose installed.
+* Java 21 and Maven (if running locally without Docker).
+
+### Running with Docker Compose
+1. Clone the repository and navigate to the project root.
+2. Build and start all services (Databases, Kafka, Redis, and Spring Boot apps):
+   ```bash
+   docker-compose up --build -d
+   ```
+3. Check the logs of any service to ensure it started successfully:
+   ```bash
+   docker-compose logs -f shopflow-order
+   ```
+4. Access the Zipkin tracing dashboard at: `http://localhost:9411`
+5. Access the Grafana monitoring dashboard at: `http://localhost:3000` (if profiles are enabled).
+
+### Stopping the Services
+To stop and remove all containers, networks, and volumes:
+```bash
+docker-compose down -v
+```

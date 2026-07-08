@@ -3,6 +3,7 @@ package com.shopflow.payment.infrastructure.messaging;
 import com.shopflow.payment.infrastructure.persistence.entity.OutboxEntity;
 import com.shopflow.payment.infrastructure.persistence.repository.JpaOutboxRepository;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,9 @@ public class OutboxRelayJob {
     }
 
     @Scheduled(fixedDelay = 10000)
+    @SchedulerLock(name = "payment_outbox_relay_lock",
+            lockAtLeastFor = "50s",
+            lockAtMostFor = "2m")
     public void processOutboxEvents() {
         List<OutboxEntity> events = jpaOutboxRepository.findAllByOrderByCreatedAtAsc();
         if (events.isEmpty()) {

@@ -3,6 +3,7 @@ package com.shopflow.inventory.infrastructure.messaging;
 import com.shopflow.inventory.infrastructure.persistence.entity.OutboxEntity;
 import com.shopflow.inventory.infrastructure.persistence.repository.JpaOutboxRepository;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,9 @@ public class OutboxRelayJob {
     }
 
     @Scheduled(fixedDelay = 10000)
+    @SchedulerLock(name = "inventory_outbox_relay_lock",
+            lockAtLeastFor = "5s",
+            lockAtMostFor = "30s")
     public void processOutboxEvents() {
         List<OutboxEntity> events = jpaOutboxRepository.findAllByOrderByCreatedAtAsc();
         if (events.isEmpty()) {

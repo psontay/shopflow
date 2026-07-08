@@ -17,16 +17,26 @@ public class DltEventConsumer {
     private static final Logger log = LoggerFactory.getLogger(DltEventConsumer.class);
     private final ObjectMapper objectMapper;
     private final KafkaTemplate<String, String> kafkaTemplate;
+    private final com.shopflow.inventory.infrastructure.persistence.repository.DeadLetterMessageRepository deadLetterMessageRepository;
 
-    public DltEventConsumer(ObjectMapper objectMapper, KafkaTemplate<String, String> kafkaTemplate) {
+    public DltEventConsumer(ObjectMapper objectMapper, KafkaTemplate<String, String> kafkaTemplate, com.shopflow.inventory.infrastructure.persistence.repository.DeadLetterMessageRepository deadLetterMessageRepository) {
         this.objectMapper = objectMapper;
         this.kafkaTemplate = kafkaTemplate;
+        this.deadLetterMessageRepository = deadLetterMessageRepository;
     }
 
     @KafkaListener(topics = "order-events.DLT",
             groupId = "inventory-dlt-group")
-    public void handleDltMessages(@Payload String messagePayload, Acknowledgment acknowledgment) {
+    public void handleDltMessages(@Payload String messagePayload, @org.springframework.messaging.handler.annotation.Header(org.springframework.kafka.support.KafkaHeaders.RECEIVED_TOPIC) String topic, Acknowledgment acknowledgment) {
         log.warn("Warning! Discovered new dead message in DLT: {}", messagePayload);
+        
+        com.shopflow.inventory.infrastructure.persistence.entity.DeadLetterMessage deadLetterMessage = com.shopflow.inventory.infrastructure.persistence.entity.DeadLetterMessage.builder()
+                .topic(topic)
+                .payload(messagePayload)
+                .reason("Failed after 3 retries in Inventory Service")
+                .build();
+        deadLetterMessageRepository.save(deadLetterMessage);
+
         try {
             JsonNode rootNode = objectMapper.readTree(messagePayload);
             String eventType = rootNode.path("eventType")

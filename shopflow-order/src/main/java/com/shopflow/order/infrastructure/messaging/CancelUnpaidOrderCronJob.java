@@ -5,6 +5,7 @@ import com.shopflow.order.application.commands.CancelOrderCommandHandler;
 import com.shopflow.order.domain.models.Order;
 import com.shopflow.order.domain.models.OrderStatus;
 import com.shopflow.order.domain.repositories.OrderRepository;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -29,6 +30,10 @@ public class CancelUnpaidOrderCronJob {
     }
 
     @Scheduled(fixedRate = 60000)
+    @SchedulerLock(name = "scanAndCancelUnpaidOrders_lock",
+            lockAtLeastFor = "50s",
+            lockAtMostFor = "2m")
+
     public void scanAndCancelUnpaidOrders() {
         log.info("Cronjob start to fetch...");
 

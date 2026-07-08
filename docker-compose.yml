@@ -197,6 +197,53 @@ services:
       - redis
     networks:
       - shopflow-network
+  shopflow-payment:
+    build:
+      context: .
+      args:
+        SERVICE_NAME: shopflow-payment
+    container_name: shopflow-payment
+    ports:
+      - "8084:8084"
+    env_file:
+      - .env
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://shopflow_payment_db:5432/${POSTGRES_PAYMENT_DB}
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=shopflow_kafka:9092
+      - SPRING_DATA_REDIS_HOST=shopflow_redis
+      - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD}
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://shopflow_zipkin:9411/api/v2/spans
+      - JAVA_TOOL_OPTIONS=-Xmx300m -Xms300m
+    depends_on:
+      - payment-db
+      - kafka
+      - redis
+    networks:
+      - shopflow-network
+  shopflow-gateway:
+    build:
+      context: .
+      args:
+        SERVICE_NAME: shopflow-gateway
+    container_name: shopflow-gateway
+    ports:
+      - "8080:8888"
+    env_file:
+      - .env
+    environment:
+      - IDENTITY_SERVICE_URL=http://shopflow-identity:8082
+      - ORDER_SERVICE_URL=http://shopflow-order:8081
+      - INVENTORY_SERVICE_URL=http://shopflow-inventory:8083
+      - PAYMENT_SERVICE_URL=http://shopflow-payment:8084
+      - SPRING_DATA_REDIS_HOST=shopflow_redis
+      - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD}
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://shopflow_zipkin:9411/api/v2/spans
+      - JAVA_TOOL_OPTIONS=-Xmx300m -Xms300m
+    depends_on:
+      - redis
+    networks:
+      - shopflow-network
+
 
 volumes:
   order-db-data:
