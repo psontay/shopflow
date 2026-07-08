@@ -1,6 +1,6 @@
-package com.shopflow.inventory.infrastructure.persistence;
+package com.shopflow.order.infrastructure.persistence.repository;
 
-import com.shopflow.inventory.infrastructure.persistence.entity.OutboxEntity;
+import com.shopflow.order.infrastructure.persistence.entity.OutboxEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,5 +9,7 @@ import java.util.UUID;
 
 @Repository
 public interface JpaOutboxRepository extends JpaRepository<OutboxEntity, UUID> {
+
     List<OutboxEntity> findAllByOrderByCreatedAtAsc();
+
 }

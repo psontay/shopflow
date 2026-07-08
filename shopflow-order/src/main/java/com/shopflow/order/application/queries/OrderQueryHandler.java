@@ -1,7 +1,7 @@
 package com.shopflow.order.application.queries;
 
-import com.shopflow.order.infrastructure.persistence.JpaOrderRepository;
 import com.shopflow.order.infrastructure.persistence.entity.OrderEntity;
+import com.shopflow.order.infrastructure.persistence.repository.JpaOrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

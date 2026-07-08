@@ -1,7 +1,7 @@
 package com.shopflow.inventory.infrastructure.messaging.handlers;
 
-import com.shopflow.inventory.infrastructure.persistence.JpaProcessedEventRepository;
 import com.shopflow.inventory.infrastructure.persistence.entity.ProcessedEventEntity;
+import com.shopflow.inventory.infrastructure.persistence.repository.JpaProcessedEventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;

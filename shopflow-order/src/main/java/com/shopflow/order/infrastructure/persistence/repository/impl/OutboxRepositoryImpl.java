@@ -1,9 +1,9 @@
-package com.shopflow.order.infrastructure.persistence.impl;
+package com.shopflow.order.infrastructure.persistence.repository.impl;
 
 import com.shopflow.order.application.outbox.OutboxRepository;
-import com.shopflow.order.infrastructure.persistence.JpaOutboxRepository;
 import com.shopflow.order.infrastructure.persistence.entity.OutboxEntity;
 import com.shopflow.order.infrastructure.persistence.mapper.OutboxPersistenceMapper;
+import com.shopflow.order.infrastructure.persistence.repository.JpaOutboxRepository;
 import com.shopflow.shared.domain.DomainEvent;
 import org.springframework.stereotype.Repository;
 

@@ -1,10 +1,10 @@
-package com.shopflow.inventory.infrastructure.persistence.impl;
+package com.shopflow.inventory.infrastructure.persistence.repository.impl;
 
 import com.shopflow.inventory.domain.models.Product;
 import com.shopflow.inventory.domain.repositories.ProductRepository;
-import com.shopflow.inventory.infrastructure.persistence.JpaProductRepository;
 import com.shopflow.inventory.infrastructure.persistence.entity.ProductEntity;
 import com.shopflow.inventory.infrastructure.persistence.mapper.ProductPersistenceMapper;
+import com.shopflow.inventory.infrastructure.persistence.repository.JpaProductRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;

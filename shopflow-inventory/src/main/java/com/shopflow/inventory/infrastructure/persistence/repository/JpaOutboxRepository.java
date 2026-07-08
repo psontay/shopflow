@@ -1,6 +1,6 @@
-package com.shopflow.order.infrastructure.persistence;
+package com.shopflow.inventory.infrastructure.persistence.repository;
 
-import com.shopflow.order.infrastructure.persistence.entity.OutboxEntity;
+import com.shopflow.inventory.infrastructure.persistence.entity.OutboxEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

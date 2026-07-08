@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shopflow.inventory.application.commands.ReserveStockCommand;
 import com.shopflow.inventory.application.commands.ReserveStockCommandHandler;
-import com.shopflow.inventory.infrastructure.persistence.JpaProcessedEventRepository;
+import com.shopflow.inventory.infrastructure.persistence.repository.JpaProcessedEventRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;

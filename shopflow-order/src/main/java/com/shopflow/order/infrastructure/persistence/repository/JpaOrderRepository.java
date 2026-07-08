@@ -1,4 +1,4 @@
-package com.shopflow.order.infrastructure.persistence;
+package com.shopflow.order.infrastructure.persistence.repository;
 
 import com.shopflow.order.infrastructure.persistence.entity.OrderEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

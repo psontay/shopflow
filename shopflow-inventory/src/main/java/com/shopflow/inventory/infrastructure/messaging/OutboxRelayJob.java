@@ -1,7 +1,7 @@
 package com.shopflow.inventory.infrastructure.messaging;
 
-import com.shopflow.inventory.infrastructure.persistence.JpaOutboxRepository;
 import com.shopflow.inventory.infrastructure.persistence.entity.OutboxEntity;
+import com.shopflow.inventory.infrastructure.persistence.repository.JpaOutboxRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;

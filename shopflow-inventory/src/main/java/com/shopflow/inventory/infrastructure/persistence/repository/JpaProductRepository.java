@@ -1,4 +1,4 @@
-package com.shopflow.inventory.infrastructure.persistence;
+package com.shopflow.inventory.infrastructure.persistence.repository;
 
 import com.shopflow.inventory.infrastructure.persistence.entity.ProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

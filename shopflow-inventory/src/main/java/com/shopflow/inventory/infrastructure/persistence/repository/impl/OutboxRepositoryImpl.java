@@ -1,10 +1,10 @@
-package com.shopflow.inventory.infrastructure.persistence.impl;
+package com.shopflow.inventory.infrastructure.persistence.repository.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shopflow.inventory.application.outbox.OutboxRepository;
-import com.shopflow.inventory.infrastructure.persistence.JpaOutboxRepository;
 import com.shopflow.inventory.infrastructure.persistence.entity.OutboxEntity;
+import com.shopflow.inventory.infrastructure.persistence.repository.JpaOutboxRepository;
 import com.shopflow.shared.domain.DomainEvent;
 import org.springframework.stereotype.Repository;
 
