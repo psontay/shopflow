@@ -1,5 +1,5 @@
 package com.shopflow.order.domain.models;
 
 public enum PaymentStatus {
-    PENDING, SUCCESS, FAILED, REFUNDED
+    PENDING, PAID, FAILED, REFUNDED
 }

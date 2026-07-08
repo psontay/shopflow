@@ -122,11 +122,11 @@ public class Order extends BaseEntity {
         if (this.orderStatus == OrderStatus.CANCELED) {
             throw new OrderDomainException(OrderErrorCode.INVALID_ORDER_STATE);
         }
-        if (this.paymentStatus == PaymentStatus.SUCCESS) {
+        if (this.paymentStatus == PaymentStatus.PAID) {
             throw new OrderDomainException(OrderErrorCode.INVALID_ORDER_STATE);
         }
         this.paymentMethod = type;
-        this.paymentStatus = PaymentStatus.SUCCESS;
+        this.paymentStatus = PaymentStatus.PAID;
         this.orderStatus = OrderStatus.PENDING_PAYMENT;
         super.markAsUpdated();
     }

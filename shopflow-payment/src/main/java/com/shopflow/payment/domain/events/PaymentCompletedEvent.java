@@ -11,12 +11,13 @@ public record PaymentCompletedEvent(
         UUID paymentId,
         UUID orderId,
         Money amount,
+        String paymentMethod,
         Instant occurredOn,
         String eventType
 ) implements DomainEvent {
 
-    public PaymentCompletedEvent(UUID paymentId, UUID orderId, Money amount) {
-        this(UUID.randomUUID(), paymentId, orderId, amount, Instant.now(), "PaymentCompletedEvent");
+    public PaymentCompletedEvent(UUID paymentId, UUID orderId, Money amount, String paymentMethod) {
+        this(UUID.randomUUID(), paymentId, orderId, amount, String paymentMethod,Instant.now(), "PaymentCompletedEvent");
     }
 
     @Override
@@ -26,7 +27,7 @@ public record PaymentCompletedEvent(
 
     @Override
     public String aggregateId() {
-        return this.orderId.toString();
+        return this.paymentId.toString();
     }
 
 }

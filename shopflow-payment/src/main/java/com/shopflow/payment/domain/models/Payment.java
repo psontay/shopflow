@@ -60,9 +60,11 @@ public class Payment extends BaseEntity {
         if (providerTransactionId == null || providerTransactionId.isBlank()) {
             throw new PaymentDomainException(PaymentErrorCode.PAY_ERR_INVALID_PROVIDER_TRANSACTION_ID);
         }
-        this.paymentStatus = PaymentStatus.SUCCESS;
+        this.paymentStatus = PaymentStatus.PAID;
         this.providerTransactionId = providerTransactionId;
-        this.addDomainEvent(new PaymentCompletedEvent(this.getId(), this.orderId, this.amount));
+        this.addDomainEvent(new PaymentCompletedEvent(this.getId(), this.orderId, this.amount,
+                                                      this.getPaymentMethod()
+                                                          .name()));
     }
 
     public void fail(String providerTransactionId, String failureReason) {
