@@ -1,6 +1,7 @@
 package com.shopflow.payment.infrastructure.messaging;
 
 import com.shopflow.payment.infrastructure.persistence.entity.OutboxEntity;
+import com.shopflow.payment.infrastructure.persistence.repository.JpaOutboxRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;

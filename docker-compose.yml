@@ -48,6 +48,23 @@ services:
     networks:
       - shopflow-network
 
+  payment-db:
+    image: postgres:15-alpine
+    container_name: shopflow_payment_db
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_PAYMENT_DB}
+    ports:
+      - "5436:5432"
+    volumes:
+      - payment-db-data:/var/lib/postgresql/data
+    networks:
+      - shopflow-network
+
   kafka:
     image: apache/kafka:3.7.0
     container_name: shopflow_kafka
@@ -185,6 +202,7 @@ volumes:
   order-db-data:
   identity-db-data:
   inventory-db-data:
+  payment-db-data:
 
 networks:
   shopflow-network:

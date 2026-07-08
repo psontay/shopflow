@@ -8,11 +8,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Service
 public class MoMoPaymentGatewayImpl implements PaymentGatewayPort {
 
     private static final Logger log = LoggerFactory.getLogger(MoMoPaymentGatewayImpl.class);
@@ -48,6 +50,7 @@ public class MoMoPaymentGatewayImpl implements PaymentGatewayPort {
                 "&redirectUrl=" + config.getReturnUrl() +
                 "&requestId=" + requestId +
                 "&requestType=" + requestType;
+        log.info("RAW DATA: {}", rawData);
 
         String signature = HmacUtil.calculateHMac(rawData, config.getSecretKey());
 
@@ -72,10 +75,8 @@ public class MoMoPaymentGatewayImpl implements PaymentGatewayPort {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
-        // Hứng cục JSON MoMo trả về
         Map<String, Object> response = restTemplate.postForObject(config.getApiEndpoint(), entity, Map.class);
 
-        // 5. Móc lấy cái link thanh toán trong cục JSON
         if (response != null && response.containsKey("payUrl")) {
             return (String) response.get("payUrl");
         }

@@ -1,5 +1,6 @@
 package com.shopflow.payment.application.commands;
 
+import com.shopflow.payment.application.outbox.OutboxRepository;
 import com.shopflow.payment.application.ports.PaymentGatewayPort;
 import com.shopflow.payment.domain.exceptions.PaymentDomainException;
 import com.shopflow.payment.domain.exceptions.PaymentErrorCode;
@@ -22,13 +23,15 @@ public class CreatePaymentLinkCommandHandler {
     private final List<PaymentGatewayPort> paymentGateways;
     private final PaymentRepository paymentRepository;
     private final TransactionTemplate transactionTemplate;
+    private final OutboxRepository outboxRepository;
 
     public CreatePaymentLinkCommandHandler(List<PaymentGatewayPort> paymentGateways,
                                            PaymentRepository paymentRepository,
-                                           TransactionTemplate transactionTemplate) {
+                                           TransactionTemplate transactionTemplate, OutboxRepository outboxRepository) {
         this.paymentGateways = paymentGateways;
         this.paymentRepository = paymentRepository;
         this.transactionTemplate = transactionTemplate;
+        this.outboxRepository = outboxRepository;
     }
 
     public String handle(CreatePaymentLinkCommand command) {
@@ -47,9 +50,11 @@ public class CreatePaymentLinkCommandHandler {
                                            PaymentErrorCode.PAY_ERR_INVALID_METHOD));
 
             paymentRepository.save(payment);
+            outboxRepository.saveEvents(payment.getDomainEvents());
+            payment.clearDomainEvents();
             String payUrl = selectedGateway.generatePayUrl(payment, command.orderInfo());
 
-            log.info("Tạo link thanh toán thành công: {}", payUrl);
+            log.info("Create payment link success: {}", payUrl);
             return payUrl;
         });
     }
