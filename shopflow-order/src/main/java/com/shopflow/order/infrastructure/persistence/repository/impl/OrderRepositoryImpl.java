@@ -1,12 +1,15 @@
 package com.shopflow.order.infrastructure.persistence.repository.impl;
 
 import com.shopflow.order.domain.models.Order;
+import com.shopflow.order.domain.models.OrderStatus;
 import com.shopflow.order.domain.repositories.OrderRepository;
 import com.shopflow.order.infrastructure.persistence.entity.OrderEntity;
 import com.shopflow.order.infrastructure.persistence.mapper.OrderPersistenceMapper;
 import com.shopflow.order.infrastructure.persistence.repository.JpaOrderRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,6 +39,14 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public void deleteById(UUID orderId) {
         jpaOrderRepository.deleteById(orderId);
+    }
+
+    @Override
+    public List<Order> findByOrderStatusAndCreatedAtBefore(OrderStatus status, Instant timeThreshold) {
+        return jpaOrderRepository.findByOrderStatusAndCreatedAtBefore(status, timeThreshold)
+                                 .stream()
+                                 .map(mapper :: toDomain)
+                                 .toList();
     }
 
 }
