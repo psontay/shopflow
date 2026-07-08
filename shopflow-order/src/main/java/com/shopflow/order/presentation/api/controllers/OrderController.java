@@ -1,4 +1,4 @@
-package com.shopflow.order.presentation.api;
+package com.shopflow.order.presentation.api.controllers;
 
 import com.shopflow.order.application.commands.CreateOrderCommand;
 import com.shopflow.order.application.commands.CreateOrderCommandHandler;

@@ -86,6 +86,7 @@ public class MoMoPaymentGatewayImpl implements PaymentGatewayPort {
 
     @Override
     public boolean verifySignature(String rawData, String signature) {
+        String expectedSignature = HmacUtil.calculateHMac(rawData, config.getSecretKey());
         return expectedSignature.equals(signature);
     }
 
