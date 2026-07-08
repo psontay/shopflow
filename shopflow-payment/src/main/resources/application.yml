@@ -50,12 +50,12 @@ resilience4j:
 
 momo:
   payment:
-    partner-code: "MOMOBKUN20180529"
-    access-key: "klm05TvNCyandNDO"
-    secret-key: "at67qH6mk8w5Y1nAwMo2NdOJTgXONzWA"
-    api-endpoint: "https://test-payment.momo.vn/v2/gateway/api/create"
-    return-url: "http://localhost:3000/payment-result"
-    ipn-url: "https://abcd.ngrok-free.app/api/v1/payments/momo-ipn"
+    partner-code: ${MOMO_PARTNER_CODE}
+    access-key: ${MOMO_ACCESS_KEY}
+    secret-key: ${MOMO_SECRET_KEY}
+    api-endpoint: ${MOMO_API_ENDPOINT}
+    return-url: ${MOMO_RETURN_URL}
+    ipn-url: ${MOMO_IPN_URL}
 
 logging:
   level:
