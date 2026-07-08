@@ -15,6 +15,7 @@ public class KafkaConfig {
     private static final Logger log = LoggerFactory.getLogger(KafkaConfig.class);
 
     @Bean
+    @org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean(DefaultErrorHandler.class)
     public DefaultErrorHandler errorHandler(KafkaTemplate<Object, Object> template) {
         DeadLetterPublishingRecoverer recoverer = new DeadLetterPublishingRecoverer(template,
                                                                                     (r, e) -> {

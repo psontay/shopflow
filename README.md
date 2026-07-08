@@ -14,6 +14,7 @@ ShopFlow is a highly scalable, event-driven e-commerce platform built with Sprin
 ### 1. Advanced Distributed Patterns
 *   **Saga Pattern (Choreography)**: Distributed transactions across `Order` and `Inventory` services. Ensures data consistency without two-phase commit (2PC) by leveraging compensating transactions (e.g., automatically canceling an order if stock reservation fails).
 *   **Transactional Outbox Pattern**: Guarantees at-least-once message delivery to Kafka. Domain events are persisted atomically with business entities in PostgreSQL and relayed asynchronously by a dedicated worker job.
+*   **Dead Letter Queue (DLQ) & Persistence**: Global error handling strategy for Kafka consumers. Messages failing to process after maximum retries are routed to dedicated DLT topics and persisted into a `dead_letter_messages` database table across services, allowing for manual inspection and future replay capabilities.
 
 ### 2. Identity & Security (shopflow-identity)
 *   **JWT Authentication**: Secure access using Access Tokens and persistent Refresh Tokens.
