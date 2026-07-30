@@ -12,11 +12,8 @@ public class DltEventConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(DltEventConsumer.class);
 
-    @KafkaListener(
-            topics = {"identity-events.DLT"},
-            groupId = "notification-dlt-group"
-    )
-    public void handleDeadLetterMessages(@Payload String messagePayload, Acknowledgment acknowledgment) {
+    @KafkaListener(topics = "shopflow.identity.events.DLT", groupId = "notification-dlt-group")
+    public void handleDltEvents(@Payload String messagePayload, Acknowledgment acknowledgment) {
         log.warn("Warning! Discovered new dead message in DLT: {}", messagePayload);
         acknowledgment.acknowledge();
     }

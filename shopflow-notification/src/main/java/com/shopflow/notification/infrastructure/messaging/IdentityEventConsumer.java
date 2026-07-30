@@ -22,9 +22,9 @@ public class IdentityEventConsumer {
         this.objectMapper = objectMapper;
     }
 
-    @KafkaListener(topics = "identity-events", groupId = "notification-group")
+    @KafkaListener(topics = "shopflow.identity.events", groupId = "notification-group")
     public void handleIdentityEvents(@Payload String messagePayload, Acknowledgment acknowledgment) {
-        log.info("Nhận sự kiện từ Identity: {}", messagePayload);
+        log.info("Get Event from Identity: {}", messagePayload);
         try {
             JsonNode rootNode = objectMapper.readTree(messagePayload);
             String eventType = rootNode.path("eventType").asText();
@@ -36,13 +36,13 @@ public class IdentityEventConsumer {
                 if (email != null && !email.isBlank() && otp != null && !otp.isBlank()) {
                     emailService.sendOtpEmail(email, otp);
                 } else {
-                    log.warn("Bỏ qua gửi mail vì thiếu thông tin. Email: {}, OTP: {}", email, otp);
+                    log.warn("Skip cause do not enough information. Email: {}, OTP: {}", email, otp);
                 }
             }
             acknowledgment.acknowledge();
         } catch (JsonProcessingException e) {
-            log.error("Lỗi parse JSON: {}", e.getMessage());
-            acknowledgment.acknowledge(); // Nuốt lỗi parse để không bị kẹt queue
+            log.error("Error when parse JSON: {}", e.getMessage());
+            acknowledgment.acknowledge();
         }
     }
 }

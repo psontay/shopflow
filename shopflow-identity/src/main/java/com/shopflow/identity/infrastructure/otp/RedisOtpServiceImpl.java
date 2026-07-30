@@ -21,7 +21,7 @@ public class RedisOtpServiceImpl implements OtpService {
     public String generateAndStoreOtp(String email) {
         int otpInt = 100000 + secureRandom.nextInt(900000);
         String otp = String.valueOf(otpInt);
-        String redisKey = "OTP" + email;
+        String redisKey = "OTP:" + email;
         redisTemplate.opsForValue()
                      .set(redisKey, otp, Duration.ofMinutes(5));
         return otp;

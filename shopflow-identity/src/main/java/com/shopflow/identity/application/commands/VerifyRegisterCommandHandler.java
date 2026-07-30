@@ -25,10 +25,10 @@ public class VerifyRegisterCommandHandler {
         String cachedOTP = (String) redisTemplate.opsForValue()
                                                  .get(redisKey);
         if (cachedOTP == null) {
-            throw new IdentityDomainException(IdentityErrorCode.INVALID_CREDENTIALS);
+            throw new IdentityDomainException(IdentityErrorCode.INVALID_OTP);
         }
         if (! cachedOTP.equals(command.otp())) {
-            throw new IdentityDomainException(IdentityErrorCode.INVALID_CREDENTIALS);
+            throw new IdentityDomainException(IdentityErrorCode.INVALID_OTP);
         }
         User user =
                 userRepository.findByEmail(command.email())

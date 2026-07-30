@@ -26,7 +26,7 @@ public class User extends BaseEntity {
     private Role role;
 
     public User(UUID userId, String username, String email,
-                String password) {
+                String password, String otp) {
         super(userId);
         if (this.getId() == null) {
             throw new IllegalArgumentException("User id cannot be null");
@@ -37,7 +37,7 @@ public class User extends BaseEntity {
         this.userStatus = UserStatus.PENDING_VERIFICATION;
         this.deleted = false;
         this.role = Role.USER;
-        this.addDomainEvent(new UserRegisterEvent(userId, email));
+        this.addDomainEvent(new UserRegisterEvent(userId, email, otp));
     }
 
     private User(UUID userId, String username, UserStatus userStatus, Role role, boolean deleted, String email,

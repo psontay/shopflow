@@ -9,6 +9,7 @@ public enum IdentityErrorCode implements ErrorCode {
     USER_ALREADY_EXISTS("IDN-002", "Username or email is already registered", HttpStatus.CONFLICT),
 
     INVALID_CREDENTIALS("IDN-003", "Invalid username or password", HttpStatus.UNAUTHORIZED),
+    INVALID_OTP("IDN-010", "Invalid or expired OTP", HttpStatus.UNAUTHORIZED),
     REFRESH_TOKEN_EXPIRED("IDN-004",
                           "Refresh token was expired. Please make a new signin request",
                           HttpStatus.UNAUTHORIZED),

@@ -40,11 +40,11 @@ public class RegisterUserCommandHandler {
                      .equals(command.confirmPassword())) {
             throw new UserDomainException(UserErrorCode.CONFIRM_PASSWORD_NOT_MATCH);
         }
-        otpService.generateAndStoreOtp(command.email());
+        String otp = otpService.generateAndStoreOtp(command.email());
         String hashedPassword = passwordEncoder.encode(command.rawPassword());
         UUID newUserId = UUID.randomUUID();
 
-        User newUser = new User(newUserId, command.username(), command.email(), hashedPassword);
+        User newUser = new User(newUserId, command.username(), command.email(), hashedPassword, otp);
         userRepository.save(newUser);
         outboxRepository.saveEvents(newUser.getDomainEvents());
         return newUser.getId();

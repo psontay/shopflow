@@ -9,7 +9,7 @@ services:
       - KAFKA_NODE_ID=1
       - KAFKA_PROCESS_ROLES=broker,controller
       - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://shopflow_kafka:9092
       - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
       - KAFKA_CONTROLLER_QUORUM_VOTERS=1@localhost:9093
@@ -166,6 +166,27 @@ services:
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://shopflow_zipkin:9411/api/v2/spans
       - JAVA_TOOL_OPTIONS=-Xmx300m -Xms300m
     depends_on:
+      - redis
+    networks:
+      - shopflow-network
+  shopflow-notification:
+    build:
+      context: .
+      args:
+        SERVICE_NAME: shopflow-notification
+    container_name: shopflow-notification
+    ports:
+      - "8085:8085"
+    env_file:
+      - .env
+    environment:
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=shopflow_kafka:9092
+      - SPRING_DATA_REDIS_HOST=shopflow_redis
+      - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD}
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://shopflow_zipkin:9411/api/v2/spans
+      - JAVA_TOOL_OPTIONS=-Xmx200m -Xms200m
+    depends_on:
+      - kafka
       - redis
     networks:
       - shopflow-network
