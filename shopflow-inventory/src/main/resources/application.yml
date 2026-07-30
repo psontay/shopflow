@@ -1,12 +1,13 @@
 server:
   port: 8083
-  
+
 spring:
   application:
     name: shopflow-inventory
 
   datasource:
-    url: jdbc:postgresql://localhost:5435/${POSTGRES_INVENTORY_DB}
+    #    url: jdbc:postgresql://localhost:5435/${POSTGRES_INVENTORY_DB}
+    url: ${POSTGRES_INVENTORY_DB_URL}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver

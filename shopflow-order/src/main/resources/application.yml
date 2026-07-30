@@ -6,7 +6,8 @@ spring:
     name: shopflow-order
 
   datasource:
-    url: jdbc:postgresql://localhost:5433/${POSTGRES_ORDER_DB}
+    #    url: jdbc:postgresql://localhost:5433/${POSTGRES_ORDER_DB}
+    url: ${POSTGRES_ORDER_DB_URL}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
