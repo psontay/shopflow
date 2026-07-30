@@ -1,70 +1,4 @@
 services:
-  order-db:
-    image: postgres:15-alpine
-    container_name: shopflow_order_db
-    restart: always
-    env_file:
-      - .env
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_ORDER_DB}
-    ports:
-      - "5433:5432"
-    volumes:
-      - order-db-data:/var/lib/postgresql/data
-    networks:
-      - shopflow-network
-  identity-db:
-    image: postgres:15-alpine
-    container_name: shopflow_identity_db
-    restart: always
-    env_file:
-      - .env
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_IDENTITY_DB}
-    ports:
-      - "5434:5432"
-    volumes:
-      - identity-db-data:/var/lib/postgresql/data
-    networks:
-      - shopflow-network
-  inventory-db:
-    image: postgres:15-alpine
-    container_name: shopflow_inventory_db
-    restart: always
-    env_file:
-      - .env
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_INVENTORY_DB}
-    ports:
-      - "5435:5432"
-    volumes:
-      - inventory-db-data:/var/lib/postgresql/data
-    networks:
-      - shopflow-network
-
-  payment-db:
-    image: postgres:15-alpine
-    container_name: shopflow_payment_db
-    restart: always
-    env_file:
-      - .env
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_PAYMENT_DB}
-    ports:
-      - "5436:5432"
-    volumes:
-      - payment-db-data:/var/lib/postgresql/data
-    networks:
-      - shopflow-network
-
   kafka:
     image: apache/kafka:3.7.0
     container_name: shopflow_kafka
@@ -139,14 +73,12 @@ services:
     env_file:
       - .env
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://shopflow_order_db:5432/${POSTGRES_ORDER_DB}
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=shopflow_kafka:9092
       - SPRING_DATA_REDIS_HOST=shopflow_redis
       - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD}
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://shopflow_zipkin:9411/api/v2/spans
       - JAVA_TOOL_OPTIONS=-Xmx300m -Xms300m
     depends_on:
-      - order-db
       - kafka
       - redis
     networks:
@@ -162,14 +94,12 @@ services:
     env_file:
       - .env
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://shopflow_identity_db:5432/${POSTGRES_IDENTITY_DB}
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=shopflow_kafka:9092
       - SPRING_DATA_REDIS_HOST=shopflow_redis
       - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD}
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://shopflow_zipkin:9411/api/v2/spans
       - JAVA_TOOL_OPTIONS=-Xmx300m -Xms300m
     depends_on:
-      - identity-db
       - kafka
       - redis
     networks:
@@ -185,14 +115,12 @@ services:
     env_file:
       - .env
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://shopflow_inventory_db:5432/${POSTGRES_INVENTORY_DB}
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=shopflow_kafka:9092
       - SPRING_DATA_REDIS_HOST=shopflow_redis
       - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD}
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://shopflow_zipkin:9411/api/v2/spans
       - JAVA_TOOL_OPTIONS=-Xmx300m -Xms300m
     depends_on:
-      - inventory-db
       - kafka
       - redis
     networks:
@@ -208,14 +136,12 @@ services:
     env_file:
       - .env
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://shopflow_payment_db:5432/${POSTGRES_PAYMENT_DB}
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=shopflow_kafka:9092
       - SPRING_DATA_REDIS_HOST=shopflow_redis
       - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD}
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://shopflow_zipkin:9411/api/v2/spans
       - JAVA_TOOL_OPTIONS=-Xmx300m -Xms300m
     depends_on:
-      - payment-db
       - kafka
       - redis
     networks:
@@ -243,13 +169,6 @@ services:
       - redis
     networks:
       - shopflow-network
-
-
-volumes:
-  order-db-data:
-  identity-db-data:
-  inventory-db-data:
-  payment-db-data:
 
 networks:
   shopflow-network:
