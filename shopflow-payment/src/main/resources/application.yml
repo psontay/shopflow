@@ -4,7 +4,8 @@ spring:
   application:
     name: shopflow-payment
   datasource:
-    url: jdbc:postgresql://localhost:5436/${POSTGRES_PAYMENT_DB}
+    #    url: jdbc:postgresql://localhost:5436/${POSTGRES_PAYMENT_DB}
+    url: ${POSTGRES_PAYMENT_DB_URL}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver

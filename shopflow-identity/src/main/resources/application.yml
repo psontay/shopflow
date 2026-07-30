@@ -5,7 +5,8 @@ spring:
   application:
     name: shopflow-identity
   datasource:
-    url: jdbc:postgresql://localhost:5434/${POSTGRES_USER_DB}
+    #    url: jdbc:postgresql://localhost:5434/${POSTGRES_IDENTITY_DB}
+    url: ${POSTGRES_IDENTITY_DB_URL}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
