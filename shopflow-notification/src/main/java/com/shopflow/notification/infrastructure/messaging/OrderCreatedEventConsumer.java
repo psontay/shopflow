@@ -12,40 +12,27 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 @Component
-public class IdentityEventConsumer {
+public class OrderCreatedEventConsumer {
 
-    private static final Logger log = LoggerFactory.getLogger(IdentityEventConsumer.class);
-
+    private static final Logger log = LoggerFactory.getLogger(OrderCreatedEventConsumer.class);
     private final EmailService emailService;
     private final ObjectMapper objectMapper;
 
-    public IdentityEventConsumer(EmailService emailService, ObjectMapper objectMapper) {
+    public OrderCreatedEventConsumer(EmailService emailService, ObjectMapper objectMapper) {
         this.emailService = emailService;
         this.objectMapper = objectMapper;
     }
 
-    @KafkaListener(topics = "shopflow.identity.events",
-            groupId = "notification-group")
-    public void handleIdentityEvents(@Payload String messagePayload, Acknowledgment acknowledgment) {
-        log.info("Get Event from Identity: {}", messagePayload);
+    @KafkaListener(topics = "order-events",
+            groupId = "notification-service-group")
+    public void consume(@Payload String messagePayload, Acknowledgment acknowledgment) {
+        log.info("Get Event from Order: {}", messagePayload);
         try {
             JsonNode rootNode = objectMapper.readTree(messagePayload);
             String eventType = rootNode.path("eventType")
                                        .asText();
-
-            if ("UserRegisterEvent".equals(eventType)) {
-                String email = rootNode.path("email")
-                                       .asText();
-                String otp = rootNode.path("otp")
-                                     .asText();
-
-                if (email != null && ! email.isBlank() && otp != null && ! otp.isBlank()) {
-                    emailService.sendOtpEmail(email, otp);
-                } else {
-                    log.warn("Skip cause do not enough information. Email: {}, OTP: {}", email, otp);
-                }
+            if ("OrderCreatedEvent".equals(eventType)) {
             }
-            acknowledgment.acknowledge();
         } catch (JsonProcessingException e) {
             log.error("Error when parse JSON: {}", e.getMessage());
             acknowledgment.acknowledge();
