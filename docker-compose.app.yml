@@ -18,9 +18,6 @@ services:
       - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD}
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://shopflow_zipkin:9411/api/v2/spans
       - JAVA_TOOL_OPTIONS=-Xmx300m -Xms300m
-    depends_on:
-      - kafka
-      - redis
     networks:
       - shopflow-network
   shopflow-identity:
@@ -39,9 +36,6 @@ services:
       - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD}
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://shopflow_zipkin:9411/api/v2/spans
       - JAVA_TOOL_OPTIONS=-Xmx300m -Xms300m
-    depends_on:
-      - kafka
-      - redis
     networks:
       - shopflow-network
   shopflow-inventory:
@@ -60,9 +54,6 @@ services:
       - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD}
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://shopflow_zipkin:9411/api/v2/spans
       - JAVA_TOOL_OPTIONS=-Xmx300m -Xms300m
-    depends_on:
-      - kafka
-      - redis
     networks:
       - shopflow-network
   shopflow-payment:
@@ -81,9 +72,6 @@ services:
       - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD}
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://shopflow_zipkin:9411/api/v2/spans
       - JAVA_TOOL_OPTIONS=-Xmx300m -Xms300m
-    depends_on:
-      - kafka
-      - redis
     networks:
       - shopflow-network
   shopflow-gateway:
@@ -105,8 +93,6 @@ services:
       - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD}
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://shopflow_zipkin:9411/api/v2/spans
       - JAVA_TOOL_OPTIONS=-Xmx300m -Xms300m
-    depends_on:
-      - redis
     networks:
       - shopflow-network
   shopflow-notification:
@@ -125,8 +111,5 @@ services:
       - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD}
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://shopflow_zipkin:9411/api/v2/spans
       - JAVA_TOOL_OPTIONS=-Xmx200m -Xms200m
-    depends_on:
-      - kafka
-      - redis
     networks:
       - shopflow-network
