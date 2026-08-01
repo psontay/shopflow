@@ -1,4 +1,4 @@
-package com.shopflow.notification.infrastructure.messaging;
+package com.shopflow.notification.infrastructure.messaging.handlers;
 
 public interface NotificationEventHandler {
 

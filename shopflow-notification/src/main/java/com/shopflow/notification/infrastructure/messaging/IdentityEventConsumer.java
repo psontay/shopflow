@@ -1,9 +1,8 @@
 package com.shopflow.notification.infrastructure.messaging;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shopflow.notification.application.service.EmailService;
+import com.shopflow.notification.infrastructure.messaging.handlers.NotificationEventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -11,43 +10,46 @@ import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class IdentityEventConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(IdentityEventConsumer.class);
 
-    private final EmailService emailService;
     private final ObjectMapper objectMapper;
+    private final List<NotificationEventHandler> eventHandlers;
 
-    public IdentityEventConsumer(EmailService emailService, ObjectMapper objectMapper) {
-        this.emailService = emailService;
+    public IdentityEventConsumer(ObjectMapper objectMapper, List<NotificationEventHandler> eventHandlers) {
         this.objectMapper = objectMapper;
+        this.eventHandlers = eventHandlers;
     }
 
-    @KafkaListener(topics = "shopflow.identity.events",
-            groupId = "notification-group")
-    public void handleIdentityEvents(@Payload String messagePayload, Acknowledgment acknowledgment) {
-        log.info("Get Event from Identity: {}", messagePayload);
+    @KafkaListener(topics = {"identity-events", "order-events"},
+            groupId = "notification-service-group")
+    public void consume(@Payload String messagePayload, Acknowledgment acknowledgment) {
+        log.info("RAW PAYLOAD received from Kafka: {}", messagePayload);
         try {
             JsonNode rootNode = objectMapper.readTree(messagePayload);
             String eventType = rootNode.path("eventType")
                                        .asText();
-
-            if ("UserRegisterEvent".equals(eventType)) {
-                String email = rootNode.path("email")
-                                       .asText();
-                String otp = rootNode.path("otp")
+            String eventId = rootNode.path("eventId")
                                      .asText();
 
-                if (email != null && ! email.isBlank() && otp != null && ! otp.isBlank()) {
-                    emailService.sendOtpEmail(email, otp);
-                } else {
-                    log.warn("Skip cause do not enough information. Email: {}, OTP: {}", email, otp);
+            boolean isHandled = false;
+            for (NotificationEventHandler handler : eventHandlers) {
+                if (handler.canHandle(eventType)) {
+                    handler.handle(eventId, messagePayload);
+                    isHandled = true;
+                    break;
                 }
             }
+            if (! isHandled) {
+                log.warn("No handler found for eventType: {}", eventType);
+            }
             acknowledgment.acknowledge();
-        } catch (JsonProcessingException e) {
-            log.error("Error when parse JSON: {}", e.getMessage());
+        } catch (Exception e) {
+            log.error("Error processing message payload: {}", messagePayload, e);
             acknowledgment.acknowledge();
         }
     }
