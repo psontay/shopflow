@@ -7,7 +7,6 @@ import com.shopflow.order.domain.exceptions.OrderErrorCode;
 import com.shopflow.order.domain.models.Order;
 import com.shopflow.order.domain.repositories.OrderRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 public class MarkOrderAwaitingPaymentCommandHandler {
@@ -15,15 +14,12 @@ public class MarkOrderAwaitingPaymentCommandHandler {
     private final OrderRepository orderRepository;
     private final OutboxRepository outboxRepository;
     private final DistributedLockPort distributedLockPort;
-    private final TransactionTemplate transactionTemplate;
 
     public MarkOrderAwaitingPaymentCommandHandler(OrderRepository orderRepository, OutboxRepository outboxRepository,
-                                                  DistributedLockPort distributedLockPort,
-                                                  TransactionTemplate transactionTemplate) {
+                                                  DistributedLockPort distributedLockPort) {
         this.orderRepository = orderRepository;
         this.outboxRepository = outboxRepository;
         this.distributedLockPort = distributedLockPort;
-        this.transactionTemplate = transactionTemplate;
     }
 
     public void handle(MarkOrderAwaitingPaymentCommand command) {
