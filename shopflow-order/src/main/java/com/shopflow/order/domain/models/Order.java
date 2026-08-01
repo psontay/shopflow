@@ -118,6 +118,14 @@ public class Order extends BaseEntity {
         }
     }
 
+    public void markAsAwaitingPayment() {
+        if (this.orderStatus != OrderStatus.PENDING) {
+            throw new OrderDomainException(OrderErrorCode.INVALID_ORDER_STATE);
+        }
+        this.orderStatus = OrderStatus.PENDING_PAYMENT;
+        super.markAsUpdated();
+    }
+
     public void markAsPaid(PaymentMethod type) {
         if (this.orderStatus == OrderStatus.CANCELED) {
             throw new OrderDomainException(OrderErrorCode.INVALID_ORDER_STATE);
@@ -127,7 +135,7 @@ public class Order extends BaseEntity {
         }
         this.paymentMethod = type;
         this.paymentStatus = PaymentStatus.PAID;
-        this.orderStatus = OrderStatus.PENDING_PAYMENT;
+        this.orderStatus = OrderStatus.SUCCESS;
         super.markAsUpdated();
     }
 
