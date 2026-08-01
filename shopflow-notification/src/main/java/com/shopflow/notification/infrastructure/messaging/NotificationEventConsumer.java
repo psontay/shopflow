@@ -13,14 +13,14 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class IdentityEventConsumer {
+public class NotificationEventConsumer {
 
-    private static final Logger log = LoggerFactory.getLogger(IdentityEventConsumer.class);
+    private static final Logger log = LoggerFactory.getLogger(NotificationEventConsumer.class);
 
     private final ObjectMapper objectMapper;
     private final List<NotificationEventHandler> eventHandlers;
 
-    public IdentityEventConsumer(ObjectMapper objectMapper, List<NotificationEventHandler> eventHandlers) {
+    public NotificationEventConsumer(ObjectMapper objectMapper, List<NotificationEventHandler> eventHandlers) {
         this.objectMapper = objectMapper;
         this.eventHandlers = eventHandlers;
     }

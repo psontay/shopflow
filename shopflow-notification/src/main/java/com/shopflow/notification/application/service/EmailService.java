@@ -45,4 +45,22 @@ public class EmailService {
         }
     }
 
+    public void sendTextEmail(String toEmail, String text) {
+        try {
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(toEmail);
+            helper.setSubject("ShopFlow - Notification Service");
+
+            helper.setText(text, true);
+
+            javaMailSender.send(message);
+            log.info("Send email success to: {}", toEmail);
+
+        } catch (MessagingException e) {
+            log.error("Error when sending {}: {}", toEmail, e.getMessage());
+        }
+    }
+
 }
