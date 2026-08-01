@@ -8,25 +8,22 @@ import java.util.UUID;
 public record StockReservedEvent(
         UUID eventId,
         Instant occurredOn,
-        UUID orderId
+        UUID orderId,
+        String eventType
 ) implements DomainEvent {
 
     public StockReservedEvent(UUID orderId) {
-        this(UUID.randomUUID(), Instant.now(), orderId);
+        this(UUID.randomUUID(), Instant.now(), orderId, "StockReservedEvent");
     }
 
     @Override
     public String aggregateType() {
-        return "Order";
+        return "INVENTORY";
     }
 
     @Override
     public String aggregateId() {
-        return orderId.toString();
-    }
-
-    public String eventType() {
-        return "StockReservedEvent";
+        return this.orderId.toString();
     }
 
 }

@@ -2,6 +2,7 @@ package com.shopflow.inventory.application.commands;
 
 import com.shopflow.inventory.application.outbox.OutboxRepository;
 import com.shopflow.inventory.domain.events.StockReservationFailedEvent;
+import com.shopflow.inventory.domain.events.StockReservedEvent;
 import com.shopflow.inventory.domain.exceptions.InventoryDomainException;
 import com.shopflow.inventory.domain.exceptions.InventoryErrorCode;
 import com.shopflow.inventory.domain.models.Product;
@@ -10,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class ReserveStockCommandHandler {
@@ -43,6 +46,8 @@ public class ReserveStockCommandHandler {
                                                });
             product.reserveStock(command.quantity());
             productRepository.save(product);
+            StockReservedEvent reservedEvent = new StockReservedEvent(command.orderId());
+            outboxRepository.saveEvents(List.of(reservedEvent));
             cacheService.evictCacheAndNotify("inventory-availability::" + command.productId());
             log.info("Reserve stock successfully. ProductID: {}", command.productId());
 

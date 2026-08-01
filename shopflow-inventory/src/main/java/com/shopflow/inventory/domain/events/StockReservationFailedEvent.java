@@ -9,11 +9,12 @@ public record StockReservationFailedEvent(
         UUID eventId,
         Instant occurredOn,
         UUID orderId,
-        String reason
+        String reason,
+        String eventType
 ) implements DomainEvent {
 
     public StockReservationFailedEvent(UUID orderId, String reason) {
-        this(UUID.randomUUID(), Instant.now(), orderId, reason);
+        this(UUID.randomUUID(), Instant.now(), orderId, reason, "StockReservationFailedEvent");
     }
 
     @Override
@@ -25,8 +26,5 @@ public record StockReservationFailedEvent(
     public String aggregateId() {
         return orderId.toString();
     }
-    
-    public String eventType() {
-        return "StockReservationFailedEvent";
-    }
+
 }
